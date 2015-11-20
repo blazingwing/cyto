@@ -60,10 +60,25 @@ public class MenuAction extends AbstractCyAction {
         	y += nodeView.getVisualProperty(BasicVisualLexicon.NODE_Y_LOCATION);
         	count1 += 1;
         }
-
-    	double a = x/count1;
-        double b = y/count1;
+        double a = 0;
+        double b = 0;
         
+        if(count1 > 0){
+        	a = x/count1;
+        	b = y/count1;
+        }
+        
+        double temp = 0;
+        
+        for (CyNode node : CyTableUtil.getNodesInState(network, "selected", true)){
+        	nodeView = networkView.getNodeView(node);
+        	nodeView.setLockedValue(BasicVisualLexicon.NODE_X_LOCATION, count1*Math.cos((temp*360/count1)*Math.PI/180)+a);
+        	nodeView.setLockedValue(BasicVisualLexicon.NODE_Y_LOCATION, count1*Math.sin((temp*360/count1)*Math.PI/180)+b);
+
+        	temp+=1;        	
+        }
+        
+
         x=0;
         y=0;        
         for (CyNode node : CyTableUtil.getNodesInState(network, "selected", false)){
@@ -75,20 +90,19 @@ public class MenuAction extends AbstractCyAction {
         	count2 += 1;
         	//nodeView.setLockedValue(BasicVisualLexicon.NODE_FILL_COLOR, Color.BLUE);
 
-        	nodeView.setLockedValue(BasicVisualLexicon.NODE_FILL_COLOR, Color.getHSBColor((float) (1/count2), 1, 1));
+        	nodeView.setLockedValue(BasicVisualLexicon.NODE_FILL_COLOR, Color.getHSBColor((float) (count2*Math.PI/180), 1, 1));
         }
 
         //View<CyNode> centroidView = networkView.getNodeView(centroid);
         
-        double temp = 0;
+        temp = 0;
         
         for (CyNode node : CyTableUtil.getNodesInState(network, "selected", false)){
         	nodeView = networkView.getNodeView(node);
-        	nodeView.setLockedValue(BasicVisualLexicon.NODE_X_LOCATION, 5*count2*Math.cos((temp*360/count2)*Math.PI/180)+a);
-        	nodeView.setLockedValue(BasicVisualLexicon.NODE_Y_LOCATION, 5*count2*Math.sin((temp*360/count2)*Math.PI/180)+b);
+        	nodeView.setLockedValue(BasicVisualLexicon.NODE_X_LOCATION, 5*(count1+count2)*Math.cos((temp*360/count2)*Math.PI/180)+a);
+        	nodeView.setLockedValue(BasicVisualLexicon.NODE_Y_LOCATION, 5*(count1+count2)*Math.sin((temp*360/count2)*Math.PI/180)+b);
 
         	temp+=1;
-
         }
         
 
