@@ -13,10 +13,10 @@ public class MyControlPanel extends JPanel implements CytoPanelComponent {
 
 	public MyControlPanel() {
 		
-		JLabel lbXYZ = new JLabel("This is my Control Panel");
-		
-		this.add(lbXYZ);
+		JLabel JLtitle = new JLabel("getTitle");
+		this.add(JLtitle);
 		this.setVisible(true);
+		
 	}
 
 
@@ -31,7 +31,7 @@ public class MyControlPanel extends JPanel implements CytoPanelComponent {
 
 
 	public String getTitle() {
-		return "Simple App Panel";
+		return "getTitle";
 	}
 
 

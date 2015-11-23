@@ -2,9 +2,11 @@
 
 import java.awt.Color;
 import java.awt.Component;
+import java.awt.Shape;
 import java.lang.Math;
 import java.util.Properties;
 
+import javax.naming.directory.BasicAttribute;
 import javax.swing.plaf.TabbedPaneUI;
 import javax.swing.plaf.basic.BasicTabbedPaneUI.TabbedPaneLayout;
 import javax.swing.text.AttributeSet.ColorAttribute;
@@ -23,6 +25,7 @@ import org.cytoscape.view.layout.CyLayoutAlgorithmManager;
 import org.cytoscape.view.model.CyNetworkView;
 import org.cytoscape.view.model.View;
 import org.cytoscape.view.presentation.property.BasicVisualLexicon;
+import org.cytoscape.view.presentation.property.NodeShapeVisualProperty;
 import org.cytoscape.work.SynchronousTaskManager;
 import org.cytoscape.work.TaskIterator;
 
@@ -47,7 +50,7 @@ public class MenuAction extends AbstractCyAction {
             setPreferredMenu("Apps");
             
        	 MyControlPanel myPanel = new MyControlPanel();
-       	 adapter.getCyServiceRegistrar().registerService(new MyControlPanel(),CytoPanelComponent.class,new Properties());
+       	 adapter.getCyServiceRegistrar().registerService(myPanel,CytoPanelComponent.class,new Properties());       	 
     }
      public void actionPerformed(ActionEvent e) {
     	 
@@ -70,8 +73,9 @@ public class MenuAction extends AbstractCyAction {
         double count1 = 0;
         double count2 = 0; 
         double count3 = 0;
-        double r = 5;
-        double[] xTable = { .5, -.5, -.2, -.5 };
+        double r = 15;
+        double sc = 0;
+
         
         for (CyNode node : CyTableUtil.getNodesInState(network, "selected", true)){
         	nodeView = networkView.getNodeView(node);
@@ -95,9 +99,12 @@ public class MenuAction extends AbstractCyAction {
         
         for (CyNode node : CyTableUtil.getNodesInState(network, "selected", true)){
         	nodeView = networkView.getNodeView(node);
-        	nodeView.setVisualProperty(BasicVisualLexicon.NODE_X_LOCATION, r*count1*Math.cos((temp*360/count1)*Math.PI/180)+a);
-        	nodeView.setVisualProperty(BasicVisualLexicon.NODE_Y_LOCATION, r*count1*Math.sin((temp*360/count1)*Math.PI/180)+b);
-
+        	nodeView.setVisualProperty(BasicVisualLexicon.NODE_X_LOCATION, (r*(count1-1))*Math.cos((temp*360/count1)*Math.PI/180)+a);
+        	nodeView.setVisualProperty(BasicVisualLexicon.NODE_Y_LOCATION, (r*(count1-1))*Math.sin((temp*360/count1)*Math.PI/180)+b);
+        	
+        	nodeView.setLockedValue(BasicVisualLexicon.NODE_SHAPE, NodeShapeVisualProperty.OCTAGON);
+        	nodeView.setLockedValue(BasicVisualLexicon.NODE_SIZE, 70.0);
+        	
         	temp+=1;        	
         }
 
@@ -106,17 +113,20 @@ public class MenuAction extends AbstractCyAction {
         
         
         int layer = (int)Math.sqrt((double)count2);
+        layer /= 2;
         temp = 0;
         
         for (CyNode node : CyTableUtil.getNodesInState(network, "selected", false)){
         	nodeView = networkView.getNodeView(node);
         	
         	double m = (temp*360/count2)*Math.PI/180;
-        	nodeView.setVisualProperty(BasicVisualLexicon.NODE_X_LOCATION, r*count2*Math.cos(m)+a+r);
-        	nodeView.setVisualProperty(BasicVisualLexicon.NODE_Y_LOCATION, r*count2*Math.sin(m)+b+r);
+        	nodeView.setVisualProperty(BasicVisualLexicon.NODE_X_LOCATION, (140+r*(temp%layer)*layer)*Math.cos(m)+a);
+        	nodeView.setVisualProperty(BasicVisualLexicon.NODE_Y_LOCATION, (140+r*(temp%layer)*layer)*Math.sin(m)+b);
         	
-        	nodeView.setLockedValue(BasicVisualLexicon.NODE_FILL_COLOR, Color.getHSBColor((float) (temp*Math.PI/360), 1, 1));
-
+        	nodeView.setLockedValue(BasicVisualLexicon.NODE_FILL_COLOR, Color.getHSBColor((float) (temp/count2), 1, 1));
+        	nodeView.setLockedValue(BasicVisualLexicon.NODE_SHAPE, NodeShapeVisualProperty.ELLIPSE);
+        	nodeView.setLockedValue(BasicVisualLexicon.NODE_SIZE, 50.0);
+        	
         	temp+=1;
         }
         
@@ -140,5 +150,6 @@ public class MenuAction extends AbstractCyAction {
         adapter.getVisualMappingManager().getVisualStyle(networkView).apply(networkView);*/
                        
         networkView.updateView();
+
     }
 }
