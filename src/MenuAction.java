@@ -1,16 +1,8 @@
-
-import java.io.FileReader;
-import java.io.BufferedReader;
-import java.io.FileNotFoundException;
-import java.io.IOException;
-
 import java.awt.Color;
 import java.awt.Component;
-import java.awt.Event;
 import java.awt.Shape;
 import java.lang.Math;
 import java.util.ArrayList;
-import java.util.List;
 import java.util.Properties;
 
 import javax.naming.directory.BasicAttribute;
@@ -20,14 +12,16 @@ import javax.swing.text.AttributeSet.ColorAttribute;
 
 import java.awt.event.ActionEvent;
 import java.awt.image.SinglePixelPackedSampleModel;
+import java.io.BufferedReader;
+import java.io.FileNotFoundException;
+import java.io.FileReader;
+import java.io.IOException;
 
 import org.cytoscape.app.CyAppAdapter;
 import org.cytoscape.application.CyApplicationManager;
 import org.cytoscape.application.swing.AbstractCyAction;
-import org.cytoscape.model.CyEdge;
 import org.cytoscape.model.CyNetwork;
 import org.cytoscape.model.CyNode;
-import org.cytoscape.model.CyTable;
 import org.cytoscape.model.CyTableUtil;
 import org.cytoscape.view.layout.CyLayoutAlgorithm;
 import org.cytoscape.view.layout.CyLayoutAlgorithmManager;
@@ -43,7 +37,6 @@ import org.cytoscape.application.swing.CySwingApplication;
 import org.cytoscape.model.CyNetworkManager;
 import org.cytoscape.application.swing.CytoPanelComponent;
 import org.cytoscape.application.swing.CyAction;
-import org.cytoscape.application.swing.CyEdgeViewContextMenuFactory;
 import org.cytoscape.service.util.AbstractCyActivator;
 
 import org.osgi.framework.BundleContext;
@@ -52,7 +45,7 @@ public class MenuAction extends AbstractCyAction {
     private final CyAppAdapter adapter;
 
     public MenuAction(CyAppAdapter adapter) {
-        super("¡¹¡¹¡¹¡¹¡¹¡¹¡¹¡¹¡¹¡¹",
+        super("â˜…â˜…â˜…â˜…â˜…â˜…â˜…â˜…â˜…â˜…",
                 adapter.getCyApplicationManager(),
                 "network",
                 adapter.getCyNetworkViewManager());
@@ -68,28 +61,21 @@ public class MenuAction extends AbstractCyAction {
         final CyNetworkView networkView = manager.getCurrentNetworkView();
         final CyNetwork network = manager.getCurrentNetwork();
 
-        String line,tempstring;
-        String[] tempArray= new String[3];
-        ArrayList<?> myList = new ArrayList<Object>();
+        String line;
+        ArrayList<String> TermList = new ArrayList<String>();
+        ArrayList<String> ClassList = new ArrayList<String>();
         
         //-----Term-----
         
-/*    	FileReader fr = null;
-    	BufferedReader br = new BufferedReader(fr);
+        FileReader fr;
+        BufferedReader br;
 		try {
 			fr = new FileReader("term.txt");
-			
-			
+			br = new BufferedReader(fr);		
+
 			try {
-				while (br.ready()) {        	
-				    System.out.println(br.readLine()); 
-				
-				
-				    
-				    
-				    
-				    
-				fr.close();
+				while ((line = br.readLine())!=null) {        	
+					TermList.add(line);
 				}
 			} catch (IOException e1) {
 				// TODO Auto-generated catch block
@@ -99,17 +85,10 @@ public class MenuAction extends AbstractCyAction {
 		} catch (FileNotFoundException e1) {
 			// TODO Auto-generated catch block
 			e1.printStackTrace();
-		}*/
+		}
     	
 
-    	
-        
 
-        	
-
-     
-        List<CyNode> neighborList;
-		
         //CyNode centroid = network.addNode();
                 
         //network.getRow(centroid).set(CyNetwork.NAME, "Centroid");
@@ -130,10 +109,12 @@ public class MenuAction extends AbstractCyAction {
         double temp = 0;
         int layer = 0;
         
+        
         for (CyNode node : CyTableUtil.getNodesInState(network, "selected", true)){
         	nodeView = networkView.getNodeView(node);
         	x += nodeView.getVisualProperty(BasicVisualLexicon.NODE_X_LOCATION);
         	y += nodeView.getVisualProperty(BasicVisualLexicon.NODE_Y_LOCATION);
+        	
         	count1 += 1;
         }
         for (CyNode node : CyTableUtil.getNodesInState(network, "selected", false)){
@@ -142,6 +123,14 @@ public class MenuAction extends AbstractCyAction {
         	y += nodeView.getVisualProperty(BasicVisualLexicon.NODE_Y_LOCATION);
 
         	count2 += 1;  	
+        	
+        	String name = nodeView.getVisualProperty(BasicVisualLexicon.NODE_LABEL);
+        	boolean isIn = ClassList.contains(name.charAt(0));
+        	if(isIn==false)
+        	{
+        		ClassList.add(String.valueOf(name.charAt(0)));
+        	}
+        	
         }
         count3 = count1 + count2;        
                 
@@ -158,13 +147,13 @@ public class MenuAction extends AbstractCyAction {
         
         for (CyNode node : CyTableUtil.getNodesInState(network, "selected", true)){
         	nodeView = networkView.getNodeView(node);
-        	neighborList = network.getNeighborList(node, CyEdge.Type.ANY);
+        	//neighborList = network.getNeighborList(node, CyEdge.Type.ANY);
         	
         	m = (temp*360/count1)*Math.PI/180;
         	nodeView.setVisualProperty(BasicVisualLexicon.NODE_X_LOCATION, (r*(count1-1))*Math.cos((temp*360/count1)*Math.PI/180)+a);
-        	nodeView.setVisualProperty(BasicVisualLexicon.NODE_Y_LOCATION, (r*(count1-1))*Math.sin((temp*360/count1)*Math.PI/180)+b);
+        	nodeView.setVisualProperty(BasicVisualLexicon.NODE_Y_LOCATION, (r*(count1-1))*Math.sin((temp*360/count1)*Math.PI/180)+b);        	
         	
-        	nodeView.setLockedValue(BasicVisualLexicon.NODE_FILL_COLOR, Color.getHSBColor(1, (float) 0.5, (float) 0.5));
+        	nodeView.setLockedValue(BasicVisualLexicon.NODE_FILL_COLOR, Color.getHSBColor(1, (float) 0.75, (float) 0.75));
         	nodeView.setLockedValue(BasicVisualLexicon.NODE_SHAPE, NodeShapeVisualProperty.OCTAGON);
         	nodeView.setLockedValue(BasicVisualLexicon.NODE_SIZE, 70.0);
         	
@@ -191,31 +180,17 @@ public class MenuAction extends AbstractCyAction {
         	nodeView.setVisualProperty(BasicVisualLexicon.NODE_X_LOCATION, (140+r*(count1-1)+r*(layer-(temp%layer))*layer)*Math.cos(m)+a);
         	nodeView.setVisualProperty(BasicVisualLexicon.NODE_Y_LOCATION, (140+r*(count1-1)+r*(layer-(temp%layer))*layer)*Math.sin(m)+b);
         	
-        	nodeView.setLockedValue(BasicVisualLexicon.NODE_FILL_COLOR, Color.getHSBColor((float) (temp/count2), 1, 1));
+        	String name = nodeView.getVisualProperty(BasicVisualLexicon.NODE_LABEL);
+        	
+        	float c = ClassList.indexOf(name.charAt(0))/ClassList.size();
+        	nodeView.setLockedValue(BasicVisualLexicon.NODE_FILL_COLOR, Color.getHSBColor(c, 1, 1));
         	nodeView.setLockedValue(BasicVisualLexicon.NODE_SHAPE, NodeShapeVisualProperty.ELLIPSE);
         	nodeView.setLockedValue(BasicVisualLexicon.NODE_SIZE, 50.0);
         	
         	temp+=1;
         }
-        
-        
 
-
-        //View<CyNode> centroidView = networkView.getNodeView(centroid);
         
-        //centroidView.setVisualProperty(BasicVisualLexicon.NODE_X_LOCATION, x);
-        //centroidView.setVisualProperty(BasicVisualLexicon.NODE_Y_LOCATION, y);
-        //centroidView.setLockedValue(BasicVisualLexicon.NODE_FILL_COLOR, Color.RED);
-        
-        //setDefaultLayout("Circular");
-        /*final CyLayoutAlgorithmManager alMan = adapter.getCyLayoutAlgorithmManager();
-        CyLayoutAlgorithm algor = null;
-        algor = alMan.getLayout("Circular");
-        TaskIterator itr = algor.createTaskIterator(networkView,algor.createLayoutContext(),CyLayoutAlgorithm.ALL_NODE_VIEWS,null);
-        adapter.getTaskManager().execute(itr);
-        SynchronousTaskManager<?> synTaskMan = adapter.getCyServiceRegistrar().getService(SynchronousTaskManager.class);           
-        synTaskMan.execute(itr);
-        adapter.getVisualMappingManager().getVisualStyle(networkView).apply(networkView);*/
                        
         networkView.updateView();
 
