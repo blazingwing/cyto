@@ -31,8 +31,7 @@ import org.cytoscape.view.presentation.property.BasicVisualLexicon;
 import org.cytoscape.view.presentation.property.NodeShapeVisualProperty;
 import org.cytoscape.work.SynchronousTaskManager;
 import org.cytoscape.work.TaskIterator;
-
-
+import org.omg.CORBA.PUBLIC_MEMBER;
 import org.cytoscape.application.swing.CySwingApplication;
 import org.cytoscape.model.CyNetworkManager;
 import org.cytoscape.application.swing.CytoPanelComponent;
@@ -64,7 +63,11 @@ public class MenuAction extends AbstractCyAction {
         String line;
         ArrayList<String> TermList = new ArrayList<String>();
         ArrayList<String> ClassList = new ArrayList<String>();
-        
+        ArrayList<Integer> SiteList= new ArrayList<Integer>();
+        ArrayList<Integer> SiteList_count = new ArrayList<Integer>();
+        ArrayList<Double> Node_x = new ArrayList<Double>();
+        ArrayList<Double> Node_y = new ArrayList<Double>();
+
         //-----Term-----
         
         FileReader fr;
@@ -117,25 +120,40 @@ public class MenuAction extends AbstractCyAction {
         	
         	count1 += 1;
         }
+
         for (CyNode node : CyTableUtil.getNodesInState(network, "selected", false)){
         	nodeView = networkView.getNodeView(node);
         	x += nodeView.getVisualProperty(BasicVisualLexicon.NODE_X_LOCATION);
         	y += nodeView.getVisualProperty(BasicVisualLexicon.NODE_Y_LOCATION);
-
+        	
         	count2 += 1;  	
         	
         	String name = nodeView.getVisualProperty(BasicVisualLexicon.NODE_LABEL);
-        	boolean isIn = ClassList.contains(name.charAt(0));
+        	String key = String.valueOf(name.charAt(0));
+        	boolean isIn = ClassList.contains(key);
         	if(isIn==false)
         	{
-        		ClassList.add(String.valueOf(name.charAt(0)));
+        		ClassList.add(key);
+        		SiteList.add(0); 
+        		SiteList_count.add(1); 
         	}
+        	else
+        	{
+        		SiteList_count.set(ClassList.indexOf(key), SiteList_count.get(ClassList.indexOf(key))+1);
+        	}
+        	
+
         	
         }
         count3 = count1 + count2;        
                 
         double a = x/count3;
         double b = y/count3;
+        
+        for(int i=1;i<SiteList.size();i++)
+        	SiteList.set(i, SiteList.get(i-1)+SiteList_count.get(i-1));
+        
+        
 
         
         
@@ -180,16 +198,33 @@ public class MenuAction extends AbstractCyAction {
         	nodeView.setVisualProperty(BasicVisualLexicon.NODE_X_LOCATION, (140+r*(count1-1)+r*(layer-(temp%layer))*layer)*Math.cos(m)+a);
         	nodeView.setVisualProperty(BasicVisualLexicon.NODE_Y_LOCATION, (140+r*(count1-1)+r*(layer-(temp%layer))*layer)*Math.sin(m)+b);
         	
-        	String name = nodeView.getVisualProperty(BasicVisualLexicon.NODE_LABEL);
+        	/* Site add */
+        	Node_x.add(nodeView.getVisualProperty(BasicVisualLexicon.NODE_X_LOCATION));
+        	Node_y.add(nodeView.getVisualProperty(BasicVisualLexicon.NODE_Y_LOCATION));
         	
-        	float c = ClassList.indexOf(name.charAt(0))/ClassList.size();
-        	nodeView.setLockedValue(BasicVisualLexicon.NODE_FILL_COLOR, Color.getHSBColor(c, 1, 1));
+        	String name = nodeView.getVisualProperty(BasicVisualLexicon.NODE_LABEL);
+        	int c = (int) ClassList.indexOf(String.valueOf(name.charAt(0)));
+        	nodeView.setLockedValue(BasicVisualLexicon.NODE_FILL_COLOR, Color.getHSBColor((float) ((float)c/ClassList.size()), 1, 1));
+        	
         	nodeView.setLockedValue(BasicVisualLexicon.NODE_SHAPE, NodeShapeVisualProperty.ELLIPSE);
         	nodeView.setLockedValue(BasicVisualLexicon.NODE_SIZE, 50.0);
         	
         	temp+=1;
         }
-
+        
+        /* Change Site */
+        for (CyNode node : CyTableUtil.getNodesInState(network, "selected", false)){
+        	nodeView = networkView.getNodeView(node);
+        	
+        	String name = nodeView.getVisualProperty(BasicVisualLexicon.NODE_LABEL);
+        	String key = String.valueOf(name.charAt(0));
+        	int c = (int) ClassList.indexOf(key);
+     	
+        	nodeView.setVisualProperty(BasicVisualLexicon.NODE_X_LOCATION, Node_x.get(SiteList.get(c)));
+        	nodeView.setVisualProperty(BasicVisualLexicon.NODE_Y_LOCATION, Node_y.get(SiteList.get(c)));
+        	
+        	SiteList.set(c, SiteList.get(c)+1); 
+        }
         
                        
         networkView.updateView();
