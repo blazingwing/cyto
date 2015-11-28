@@ -1,3 +1,4 @@
+
 import java.util.Properties;
 
 import org.cytoscape.app.swing.AbstractCySwingApp;
