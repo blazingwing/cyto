@@ -216,8 +216,11 @@ public class MenuAction extends AbstractCyAction {
         
         for(int i=1;i<SiteList.size();i++)
         	SiteList.set(i, SiteList.get(i-1)+SiteList_count.get(i-1));
-        if(NanSiteList_count>0)
-        	NanSiteList.set(0, SiteList.get(SiteList.size()-1)+SiteList_count.get(SiteList_count.size()-1));
+        if(SiteList.size()!=0)
+        	if(NanSiteList_count>0)
+        		NanSiteList.set(0, SiteList.get(SiteList.size()-1)+SiteList_count.get(SiteList_count.size()-1));
+
+        	
         
 
         Bend bb = null;
@@ -299,12 +302,14 @@ public class MenuAction extends AbstractCyAction {
         	{
         		c2 = (float) 0;
         		c3 = (float) 0.8;	
+        		nodeView.setLockedValue(BasicVisualLexicon.NODE_FILL_COLOR, Color.getHSBColor((float) 0, c2, c3));
         	}	
         	else
         	{
         		c = ClassList.indexOf(key);
+        		nodeView.setLockedValue(BasicVisualLexicon.NODE_FILL_COLOR, Color.getHSBColor((float) ((float)c/ClassList.size()), c2, c3));
         	}
-        	nodeView.setLockedValue(BasicVisualLexicon.NODE_FILL_COLOR, Color.getHSBColor((float) ((float)c/ClassList.size()), c2, c3));
+        		
         	
         	nodeView.setLockedValue(BasicVisualLexicon.NODE_SHAPE, NodeShapeVisualProperty.ELLIPSE);
         	nodeView.setLockedValue(BasicVisualLexicon.NODE_SIZE, 50.0);
