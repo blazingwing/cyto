@@ -89,6 +89,8 @@ public class MenuAction extends AbstractCyAction {
         
         ArrayList<Integer> SiteList= new ArrayList<Integer>();
         ArrayList<Integer> SiteList_count = new ArrayList<Integer>();
+        ArrayList<Integer> NanSiteList= new ArrayList<Integer>();
+        int NanSiteList_count = 0;
         ArrayList<Double> Node_x = new ArrayList<Double>();
         ArrayList<Double> Node_y = new ArrayList<Double>();
 
@@ -139,6 +141,7 @@ public class MenuAction extends AbstractCyAction {
         double y = 0;
         double count1 = 0;
         double count2 = 0; 
+        double count2_withoutNan = 0;
         double count3 = 0;
         double r = 15;
         double m = 0;
@@ -174,26 +177,38 @@ public class MenuAction extends AbstractCyAction {
         		}
         	}
         	if(isIn==false)
-        		key="NaN";
-        	
-        	isIn = ClassList.contains(key);
-        	if(isIn==false)
         	{
-        		ClassList.add(key);
-        		SiteList.add(0); 
-        		SiteList_count.add(1); 
+        		key="NaN";
+        		if(NanSiteList_count>0)
+        		{
+        			NanSiteList_count+=1;
+        		}
+        		else
+        		{
+        			NanSiteList.add(0);
+        			NanSiteList_count+=1;
+        		} 
         	}
         	else
         	{
-        		SiteList_count.set(ClassList.indexOf(key), SiteList_count.get(ClassList.indexOf(key))+1);
+        		isIn = ClassList.contains(key);
+        		if(isIn==false)
+        		{
+        			ClassList.add(key);
+        			SiteList.add(0); 
+        			SiteList_count.add(1); 
+        		}
+        		else
+        		{
+        			SiteList_count.set(ClassList.indexOf(key), SiteList_count.get(ClassList.indexOf(key))+1);
+        		}
+        		count2_withoutNan += 1;
         	}
-        	
         	Node_class.add(key);
-        	
-       	
-        	count2 += 1;        	
-        	
+        	count2 += 1;
         }
+        
+        
         count3 = count1 + count2;        
                 
         double a = x/count3;
@@ -201,7 +216,8 @@ public class MenuAction extends AbstractCyAction {
         
         for(int i=1;i<SiteList.size();i++)
         	SiteList.set(i, SiteList.get(i-1)+SiteList_count.get(i-1));
-        
+        if(NanSiteList_count>0)
+        	NanSiteList.set(0, SiteList.get(SiteList.size()-1)+SiteList_count.get(SiteList_count.size()-1));
         
 
         Bend bb = null;
@@ -226,12 +242,12 @@ public class MenuAction extends AbstractCyAction {
         	nodeView.setLockedValue(BasicVisualLexicon.NODE_LABEL_COLOR, Color.BLACK);
         	
         	temp+=1;   
-         
+        	
         }
         
         //CyEdge edge = CyTableUtil.getEdgesInState(arg0, arg1, arg2);
         temp=0;
-        for (CyEdge edge : CyTableUtil.getEdgesInState(network, "selected", false)){
+        /*for (CyEdge edge : CyTableUtil.getEdgesInState(network, "selected", false)){
         	edgeView = networkView.getEdgeView(edge);
         	
 
@@ -239,7 +255,7 @@ public class MenuAction extends AbstractCyAction {
         	java.util.List<Handle> handles = bb.getAllHandles();
         	//for (Handle handle : handles)
         		//handle.defineHandle( networkView, (View<CyEdge>)  edgeView, -13.0, 37.0);
-        	/*double temp2=0;
+        	double temp2=0;
         	for (CyNode node : CyTableUtil.getNodesInState(network, "selected", false)){
             	nodeView = networkView.getNodeView(node);
             	if(temp==temp2)
@@ -249,9 +265,9 @@ public class MenuAction extends AbstractCyAction {
                 	break;
             	}
             	temp2+=1;
-        	}*/
+        	}
         	temp+=1; 
-        }
+        }*/
         
         //network.getConnectingEdgeList(arg0, arg1, arg2)        		
 
@@ -274,15 +290,20 @@ public class MenuAction extends AbstractCyAction {
         	Node_x.add(nodeView.getVisualProperty(BasicVisualLexicon.NODE_X_LOCATION));
         	Node_y.add(nodeView.getVisualProperty(BasicVisualLexicon.NODE_Y_LOCATION));
         	
-        	String key = Node_class.get((int)temp);
-        	int c = ClassList.indexOf(key);
+        	int c = 0;
+        	String key = Node_class.get((int)temp);        	
+        	
         	float c2 = 1;
         	float c3 = 1;
         	if(key.equals("NaN"))
         	{
         		c2 = (float) 0;
-        		c3 = (float) 0.75;
+        		c3 = (float) 0.8;	
         	}	
+        	else
+        	{
+        		c = ClassList.indexOf(key);
+        	}
         	nodeView.setLockedValue(BasicVisualLexicon.NODE_FILL_COLOR, Color.getHSBColor((float) ((float)c/ClassList.size()), c2, c3));
         	
         	nodeView.setLockedValue(BasicVisualLexicon.NODE_SHAPE, NodeShapeVisualProperty.ELLIPSE);
@@ -290,7 +311,7 @@ public class MenuAction extends AbstractCyAction {
         	nodeView.setLockedValue(BasicVisualLexicon.NODE_LABEL_COLOR, Color.BLACK);
         	temp+=1;
         	
-
+        	
         	
         	/*String EDGE_BEND_DEFINITION = "3,0.003,0.3,500";
         	BendFactory bendFactory = null;        	
@@ -305,14 +326,30 @@ public class MenuAction extends AbstractCyAction {
         for (CyNode node : CyTableUtil.getNodesInState(network, "selected", false)){
         	nodeView = networkView.getNodeView(node);
         	
+        	int c = 0;
         	String key = Node_class.get((int)temp);
-        	int c = (int) ClassList.indexOf(key);
-     	
-        	nodeView.setVisualProperty(BasicVisualLexicon.NODE_X_LOCATION, Node_x.get(SiteList.get(c)));
-        	nodeView.setVisualProperty(BasicVisualLexicon.NODE_Y_LOCATION, Node_y.get(SiteList.get(c)));
+        	
+        	
+        	if(key.equals("NaN"))
+        	{	
+        		
+        		nodeView.setVisualProperty(BasicVisualLexicon.NODE_X_LOCATION, Node_x.get(NanSiteList.get(0)));
+        		nodeView.setVisualProperty(BasicVisualLexicon.NODE_Y_LOCATION, Node_y.get(NanSiteList.get(0)));
+        		
+        		NanSiteList.set(0, NanSiteList.get(0)+1);
 
-        	SiteList.set(c, SiteList.get(c)+1); 
+        	}
+        	else
+        	{
+        		
+        		c = (int) ClassList.indexOf(key);
      	
+        		nodeView.setVisualProperty(BasicVisualLexicon.NODE_X_LOCATION, Node_x.get(SiteList.get(c)));
+        		nodeView.setVisualProperty(BasicVisualLexicon.NODE_Y_LOCATION, Node_y.get(SiteList.get(c)));
+
+        		SiteList.set(c, SiteList.get(c)+1);
+        	}
+        	
         	temp+=1;
         }
         
