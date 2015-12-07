@@ -10,7 +10,7 @@ import org.cytoscape.model.CyNetwork;
 import org.cytoscape.model.CyNode;
 
 public class ClusteringCoefficientImpl {
-
+	
 	public double getClusteringCoefficient(CyNetwork network, CyNode node,
 			boolean directed) {
 

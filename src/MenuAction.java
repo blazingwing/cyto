@@ -11,6 +11,8 @@ import java.util.Enumeration;
 import java.util.Properties;
 import java.util.jar.JarFile;
 import java.util.zip.ZipEntry;
+import java.util.HashSet;
+import java.util.Set;
 
 import javax.crypto.spec.IvParameterSpec;
 import javax.naming.directory.BasicAttribute;
@@ -44,6 +46,7 @@ import org.cytoscape.view.model.CyNetworkView;
 import org.cytoscape.view.model.View;
 import org.cytoscape.view.presentation.property.BasicVisualLexicon;
 import org.cytoscape.view.presentation.property.EdgeBendVisualProperty;
+import org.cytoscape.view.presentation.property.LineTypeVisualProperty;
 import org.cytoscape.view.presentation.property.NodeShapeVisualProperty;
 import org.cytoscape.view.presentation.property.values.Bend;
 import org.cytoscape.view.presentation.property.values.BendFactory;
@@ -58,7 +61,9 @@ import org.cytoscape.application.swing.CyAction;
 import org.cytoscape.service.util.AbstractCyActivator;
 import org.cytoscape.task.EdgeViewTaskFactory;
 import org.osgi.framework.BundleContext;
+import org.osgi.framework.BundleException;
 import org.osgi.framework.FrameworkListener;
+import org.osgi.service.condpermadmin.BundleLocationCondition;
 
 public class MenuAction extends AbstractCyAction {
     private final CyAppAdapter adapter;
@@ -96,19 +101,19 @@ public class MenuAction extends AbstractCyAction {
 
         View<CyNode> nodeView = null;
         View<CyEdge> edgeView = null;
-        
+
+        ArrayList<CyNode> Core_neighbor = new ArrayList<CyNode>();
+        ArrayList<CyEdge> Core_edge = new ArrayList<CyEdge>();
+				
         //-----Term-----
         for (CyNode node : CyTableUtil.getNodesInState(network, "selected", true)){
         	nodeView = networkView.getNodeView(node);
         }
-
         
         InputStream is = MenuAction.class.getResourceAsStream("term.txt");
         InputStreamReader isr = new InputStreamReader(is); 
         BufferedReader br = new BufferedReader(isr);	
-        
-        //nodeView.setVisualProperty(BasicVisualLexicon.NODE_LABEL, url.toString());
-		//nodeView.setVisualProperty(BasicVisualLexicon.NODE_LABEL_COLOR, Color.black);
+
         Term t_term = new Term();
         String [] str=null;
 		try {
@@ -148,15 +153,32 @@ public class MenuAction extends AbstractCyAction {
         double temp = 0;
         int layer = 0;
         
-        
+        //ALL Node
+        for(CyNode node : network.getNodeList()){
+        	nodeView = networkView.getNodeView(node);
+        	nodeView.setLockedValue(BasicVisualLexicon.NODE_LABEL_COLOR, Color.BLACK);
+        	nodeView.setLockedValue(BasicVisualLexicon.NODE_LABEL_FONT_SIZE, 18);
+        }
+      //ALL Edge
+        for(CyEdge edge : network.getEdgeList()){
+        	edgeView = networkView.getEdgeView(edge);
+        	edgeView.setLockedValue(BasicVisualLexicon.EDGE_TRANSPARENCY, 50);
+        	edgeView.setLockedValue(BasicVisualLexicon.EDGE_LINE_TYPE, LineTypeVisualProperty.DASH_DOT);
+        }
+      
+        //Selected Node
         for (CyNode node : CyTableUtil.getNodesInState(network, "selected", true)){
         	nodeView = networkView.getNodeView(node);
         	x += nodeView.getVisualProperty(BasicVisualLexicon.NODE_X_LOCATION);
         	y += nodeView.getVisualProperty(BasicVisualLexicon.NODE_Y_LOCATION);
         	
+        	Core_neighbor = (ArrayList<CyNode>) network.getNeighborList(node, CyEdge.Type.ANY);
+        	Core_edge = (ArrayList<CyEdge>) network.getAdjacentEdgeList(node,CyEdge.Type.ANY);
+
         	count1 += 1;
         }
 
+        //UnSelected Node get term
         for (CyNode node : CyTableUtil.getNodesInState(network, "selected", false)){
         	nodeView = networkView.getNodeView(node);
         	x += nodeView.getVisualProperty(BasicVisualLexicon.NODE_X_LOCATION);
@@ -165,6 +187,8 @@ public class MenuAction extends AbstractCyAction {
        	
         	String name = nodeView.getVisualProperty(BasicVisualLexicon.NODE_LABEL);
         	//String key = String.valueOf(name.charAt(0));
+        	/*----- Get Term -----*/
+        	
         	String key = name;
         	boolean isIn = false;
         	for(int i=0;i<TermList.size();i++)
@@ -205,7 +229,10 @@ public class MenuAction extends AbstractCyAction {
         		count2_withoutNan += 1;
         	}
         	Node_class.add(key);
-        	count2 += 1;
+        	
+        	
+        	count2 += 1;       	
+        	
         }
         
         
@@ -226,7 +253,7 @@ public class MenuAction extends AbstractCyAction {
         Bend bb = null;
         
         
-        
+        /* Site Circle Selected */
         layer = (int)Math.sqrt((double)count1);
         layer /= 2;
         temp = 0;
@@ -239,17 +266,17 @@ public class MenuAction extends AbstractCyAction {
         	nodeView.setVisualProperty(BasicVisualLexicon.NODE_X_LOCATION, (r*(count1-1))*Math.cos((temp*360/count1)*Math.PI/180)+a);
         	nodeView.setVisualProperty(BasicVisualLexicon.NODE_Y_LOCATION, (r*(count1-1))*Math.sin((temp*360/count1)*Math.PI/180)+b);        	
         	
-        	nodeView.setLockedValue(BasicVisualLexicon.NODE_FILL_COLOR, Color.getHSBColor((float )0.5, (float) 0, (float) 0.5));
-        	nodeView.setLockedValue(BasicVisualLexicon.NODE_SHAPE, NodeShapeVisualProperty.OCTAGON);
+        	nodeView.setLockedValue(BasicVisualLexicon.NODE_FILL_COLOR, Color.getHSBColor((float )0, (float) 0.4, (float) 0.7));
+        	nodeView.setLockedValue(BasicVisualLexicon.NODE_BORDER_PAINT, Color.getHSBColor((float )0, (float) 0.4, (float) 0.7));
+        	
+        	nodeView.setLockedValue(BasicVisualLexicon.NODE_SHAPE, NodeShapeVisualProperty.DIAMOND);
         	nodeView.setLockedValue(BasicVisualLexicon.NODE_SIZE, 70.0);
-        	nodeView.setLockedValue(BasicVisualLexicon.NODE_LABEL_COLOR, Color.BLACK);
         	
-        	temp+=1;   
-        	
+        	temp+=1;           	
         }
         
         //CyEdge edge = CyTableUtil.getEdgesInState(arg0, arg1, arg2);
-        temp=0;
+        //temp=0;
         /*for (CyEdge edge : CyTableUtil.getEdgesInState(network, "selected", false)){
         	edgeView = networkView.getEdgeView(edge);
         	
@@ -258,26 +285,17 @@ public class MenuAction extends AbstractCyAction {
         	java.util.List<Handle> handles = bb.getAllHandles();
         	//for (Handle handle : handles)
         		//handle.defineHandle( networkView, (View<CyEdge>)  edgeView, -13.0, 37.0);
-        	double temp2=0;
-        	for (CyNode node : CyTableUtil.getNodesInState(network, "selected", false)){
-            	nodeView = networkView.getNodeView(node);
-            	if(temp==temp2)
-            	{
-            		nodeView.setVisualProperty(BasicVisualLexicon.NODE_LABEL, String.valueOf(handles.get(0)));
-                	nodeView.setVisualProperty(BasicVisualLexicon.NODE_LABEL_COLOR, Color.black);
-                	break;
-            	}
-            	temp2+=1;
-        	}
-        	temp+=1; 
+
         }*/
         
-        //network.getConnectingEdgeList(arg0, arg1, arg2)        		
+        //network.getConnectingEdgeList(arg0, arg1, arg2)  
+        
+        
 
         
         
         
-        
+        /* Site Circle Unselected */
         layer = (int)Math.sqrt((double)count2);
         layer /= 2;
         temp = 0;
@@ -296,26 +314,38 @@ public class MenuAction extends AbstractCyAction {
         	int c = 0;
         	String key = Node_class.get((int)temp);        	
         	
-        	float c2 = 1;
-        	float c3 = 1;
+        	float c2 = (float) 0.85;
+        	float c3 = (float) 0.85;
         	if(key.equals("NaN"))
         	{
-        		c2 = (float) 0;
-        		c3 = (float) 0.8;	
+        		c2 = (float) 0.05;
+        		c3 = (float) 0.5;	
         		nodeView.setLockedValue(BasicVisualLexicon.NODE_FILL_COLOR, Color.getHSBColor((float) 0, c2, c3));
+        		nodeView.setLockedValue(BasicVisualLexicon.NODE_BORDER_PAINT, Color.getHSBColor((float) 0, c2, c3));
         	}	
         	else
         	{
         		c = ClassList.indexOf(key);
-        		nodeView.setLockedValue(BasicVisualLexicon.NODE_FILL_COLOR, Color.getHSBColor((float) ((float)c/ClassList.size()), c2, c3));
+        		nodeView.setLockedValue(BasicVisualLexicon.NODE_FILL_COLOR, Color.getHSBColor((float) ((float)(c+count1)/(ClassList.size()+count1)), c2, c3));
+        		nodeView.setLockedValue(BasicVisualLexicon.NODE_BORDER_PAINT, Color.getHSBColor((float) ((float)(c+count1)/(ClassList.size()+count1)), c2, c3));
         	}
-        		
         	
+        	
+        	ArrayList<CyEdge> node_edge = (ArrayList<CyEdge>) network.getAdjacentEdgeList(node,CyEdge.Type.ANY);	
+        	for(int i=0;i<node_edge.size();i++)
+        		for(int j=0;j<Core_edge.size();j++)
+        			if(node_edge.get(i)==Core_edge.get(j))
+        			{
+        				edgeView = networkView.getEdgeView(node_edge.get(i));
+        				edgeView.setLockedValue(BasicVisualLexicon.EDGE_STROKE_UNSELECTED_PAINT, Color.getHSBColor((float) ((float)(c+count1)/(ClassList.size()+count1)), c2, c3));
+        				edgeView.setLockedValue(BasicVisualLexicon.EDGE_TRANSPARENCY,250);
+        				edgeView.setLockedValue(BasicVisualLexicon.EDGE_LINE_TYPE, LineTypeVisualProperty.SOLID);
+        			}
+
         	nodeView.setLockedValue(BasicVisualLexicon.NODE_SHAPE, NodeShapeVisualProperty.ELLIPSE);
-        	nodeView.setLockedValue(BasicVisualLexicon.NODE_SIZE, 50.0);
-        	nodeView.setLockedValue(BasicVisualLexicon.NODE_LABEL_COLOR, Color.BLACK);
-        	temp+=1;
+        	nodeView.setLockedValue(BasicVisualLexicon.NODE_SIZE, 60.0);
         	
+        	temp+=1;        	
         	
         	
         	/*String EDGE_BEND_DEFINITION = "3,0.003,0.3,500";
@@ -357,11 +387,9 @@ public class MenuAction extends AbstractCyAction {
         	
         	temp+=1;
         }
-        
-        
+
         networkView.updateView();
-        
-        
+
 
     }
 }
