@@ -1,3 +1,11 @@
+import ControlPanel.*;
+import BundleEdge.*;
+import Term.*;
+
+import static org.cytoscape.work.ServiceProperties.ENABLE_FOR;
+import static org.cytoscape.work.ServiceProperties.MENU_GRAVITY;
+import static org.cytoscape.work.ServiceProperties.PREFERRED_MENU;
+import static org.cytoscape.work.ServiceProperties.TITLE;
 
 import java.awt.Color;
 import java.awt.Component;
@@ -8,10 +16,12 @@ import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.Enumeration;
+import java.util.HashMap;
 import java.util.Properties;
 import java.util.jar.JarFile;
 import java.util.zip.ZipEntry;
 import java.util.HashSet;
+import java.util.Map;
 import java.util.Set;
 
 import javax.crypto.spec.IvParameterSpec;
@@ -21,6 +31,7 @@ import javax.swing.plaf.TabbedPaneUI;
 import javax.swing.plaf.basic.BasicTabbedPaneUI.TabbedPaneLayout;
 import javax.swing.text.AttributeSet.ColorAttribute;
 import javax.xml.soap.Node;
+import javax.xml.stream.events.StartDocument;
 
 import java.awt.event.ActionEvent;
 import java.awt.geom.Point2D;
@@ -51,6 +62,10 @@ import org.cytoscape.view.presentation.property.NodeShapeVisualProperty;
 import org.cytoscape.view.presentation.property.values.Bend;
 import org.cytoscape.view.presentation.property.values.BendFactory;
 import org.cytoscape.view.presentation.property.values.Handle;
+import org.cytoscape.view.presentation.property.values.HandleFactory;
+import org.cytoscape.view.vizmap.VisualMappingFunctionFactory;
+import org.cytoscape.view.vizmap.VisualMappingManager;
+import org.cytoscape.view.vizmap.mappings.DiscreteMapping;
 import org.cytoscape.work.SynchronousTaskManager;
 import org.cytoscape.work.TaskIterator;
 import org.omg.CORBA.PUBLIC_MEMBER;
@@ -60,28 +75,33 @@ import org.cytoscape.application.swing.CytoPanelComponent;
 import org.cytoscape.application.swing.CyAction;
 import org.cytoscape.service.util.AbstractCyActivator;
 import org.cytoscape.task.EdgeViewTaskFactory;
+import org.cytoscape.task.NetworkTaskFactory;
 import org.osgi.framework.BundleContext;
 import org.osgi.framework.BundleException;
 import org.osgi.framework.FrameworkListener;
 import org.osgi.service.condpermadmin.BundleLocationCondition;
 
+import static org.cytoscape.work.ServiceProperties.*;
+
 public class MenuAction extends AbstractCyAction {
     private final CyAppAdapter adapter;
 
     public MenuAction(CyAppAdapter adapter) {
-        super("â˜…â˜…â˜…â˜…â˜…â˜…â˜…â˜…â˜…â˜…",
+        super("¡¹¡¹¡¹¡¹¡¹¡¹¡¹¡¹¡¹¡¹",
                 adapter.getCyApplicationManager(),
                 "network",
                 adapter.getCyNetworkViewManager());
             this.adapter = adapter;
             setPreferredMenu("Apps");
             
-       	 MyControlPanel myPanel = new MyControlPanel();
-       	 adapter.getCyServiceRegistrar().registerService(myPanel,CytoPanelComponent.class,new Properties());       	 
+       	 //MyControlPanel myPanel = new MyControlPanel();
+       	 //adapter.getCyServiceRegistrar().registerService(myPanel,CytoPanelComponent.class,new Properties());    
     }
      @SuppressWarnings({ "unused", "null" })
 	public void actionPerformed(ActionEvent e) {
-    	 
+
+    	
+    	//new CyActivator();
         final CyApplicationManager manager = adapter.getCyApplicationManager();
         final CyNetworkView networkView = manager.getCurrentNetworkView();
         final CyNetwork network = manager.getCurrentNetwork();
@@ -102,6 +122,7 @@ public class MenuAction extends AbstractCyAction {
         View<CyNode> nodeView = null;
         View<CyEdge> edgeView = null;
 
+        CyNode Core_node = null;
         ArrayList<CyNode> Core_neighbor = new ArrayList<CyNode>();
         ArrayList<CyEdge> Core_edge = new ArrayList<CyEdge>();
 				
@@ -160,10 +181,12 @@ public class MenuAction extends AbstractCyAction {
         	nodeView.setLockedValue(BasicVisualLexicon.NODE_LABEL_FONT_SIZE, 18);
         }
       //ALL Edge
+        temp=0;
         for(CyEdge edge : network.getEdgeList()){
         	edgeView = networkView.getEdgeView(edge);
         	edgeView.setLockedValue(BasicVisualLexicon.EDGE_TRANSPARENCY, 50);
         	edgeView.setLockedValue(BasicVisualLexicon.EDGE_LINE_TYPE, LineTypeVisualProperty.DASH_DOT);
+        	temp++;
         }
       
         //Selected Node
@@ -174,7 +197,6 @@ public class MenuAction extends AbstractCyAction {
         	
         	Core_neighbor = (ArrayList<CyNode>) network.getNeighborList(node, CyEdge.Type.ANY);
         	Core_edge = (ArrayList<CyEdge>) network.getAdjacentEdgeList(node,CyEdge.Type.ANY);
-
         	count1 += 1;
         }
 
@@ -274,25 +296,7 @@ public class MenuAction extends AbstractCyAction {
         	
         	temp+=1;           	
         }
-        
-        //CyEdge edge = CyTableUtil.getEdgesInState(arg0, arg1, arg2);
-        //temp=0;
-        /*for (CyEdge edge : CyTableUtil.getEdgesInState(network, "selected", false)){
-        	edgeView = networkView.getEdgeView(edge);
-        	
-
-        	bb = edgeView.getVisualProperty(BasicVisualLexicon.EDGE_BEND);
-        	java.util.List<Handle> handles = bb.getAllHandles();
-        	//for (Handle handle : handles)
-        		//handle.defineHandle( networkView, (View<CyEdge>)  edgeView, -13.0, 37.0);
-
-        }*/
-        
-        //network.getConnectingEdgeList(arg0, arg1, arg2)  
-        
-        
-
-        
+     
         
         
         /* Site Circle Unselected */
@@ -387,9 +391,146 @@ public class MenuAction extends AbstractCyAction {
         	
         	temp+=1;
         }
+        
+        
+        temp=0;
+        /* Bundle Edge */ 
+        
+        for (CyNode node : CyTableUtil.getNodesInState(network, "selected", true)){
+        	nodeView = networkView.getNodeView(node);
+        	x = nodeView.getVisualProperty(BasicVisualLexicon.NODE_X_LOCATION);
+        	y = nodeView.getVisualProperty(BasicVisualLexicon.NODE_Y_LOCATION);
+        	Core_node = node;
+        }
+        nodeView = networkView.getNodeView(Core_node);
+
+        ArrayList<CyEdge> Core_node_edge = (ArrayList<CyEdge>) network.getAdjacentEdgeList(Core_node,CyEdge.Type.ANY);
+
+        ArrayList<CyNode> groupCyNode = new ArrayList<CyNode>();
+    	ArrayList<CyEdge> groupCyEdge = new ArrayList<CyEdge>();
+        
+        for(int i=0;i<ClassList.size();i++){
+
+        	groupCyNode = new ArrayList<CyNode>();
+        	groupCyEdge = new ArrayList<CyEdge>();
+        	int gcn=0;
+        	int gce=0;
+
+        	double gx=0;
+        	double gy=0;
+
+        	int gc=0;
+        	temp=0;
+        	
+        	for(CyEdge edge:Core_node_edge){
+    			edgeView = networkView.getEdgeView(edge);
+    			nodeView = networkView.getNodeView(edge.getTarget());
+    			
+    			int c=-1;
+        		boolean isIn = false;
+        		String key = nodeView.getVisualProperty(BasicVisualLexicon.NODE_LABEL);
+        		for(int ki=0;ki<TermList.size();ki++){
+            		if(TermList.get(ki).Term_node.contains(key)){
+            			key = TermList.get(ki).Term_name;
+            			isIn = true;
+            			break;
+            		}
+        		}
+        		if(!isIn)
+        			key = "NaN";        		
+        		
+        		if(key.equals("NaN"))
+        			continue;
+        		else
+        			c = (int) ClassList.indexOf(key);
+        		
+        		
+        		if(i==c)
+        		{
+         			gx+=nodeView.getVisualProperty(BasicVisualLexicon.NODE_X_LOCATION);
+        			gy+=nodeView.getVisualProperty(BasicVisualLexicon.NODE_Y_LOCATION);   
+        			groupCyNode.add(edge.getTarget());
+        			gcn++;
+        			groupCyEdge.add(edge);
+        			gce++;
+        		}
+        		
+        	}
+        	
+        	gx/=groupCyNode.size();
+        	gy/=groupCyNode.size();
+        	
+
+        	        	
+        	for(CyEdge edge : groupCyEdge){
+
+        		edgeView = networkView.getEdgeView(edge); 
+        		bb = edgeView.getVisualProperty(BasicVisualLexicon.EDGE_BEND);
+            	java.util.List<Handle> handles = bb.getAllHandles();
+            	for(Handle h : handles)
+            		edgeView.setVisualProperty(BasicVisualLexicon.EDGE_LABEL, h.toString());
+            	
+        	}
+        	//bend.insertHandleAt(0, h);        	
+        	//edgeView.setVisualProperty(BasicVisualLexicon.EDGE_BEND, bend);
+        	
+        /*	BendFactory bf =null;
+			HandleFactory hf = null;
+			Bend bend = bf.createBend();
+			java.util.List<Handle> hlist = bend.getAllHandles();
+
+			final Handle h = hf.createHandle(gx/6.0, gy/6.0);
+			hlist.add(h);
+			final Map<Long, Bend> mappingValues;
+			mappingValues = new HashMap<>();
+			String suid = String.valueOf(edgeView.getSUID());
+			mappingValues.put(edgeView.getSUID(),bend);
+
+			final VisualMappingFunctionFactory discreteFactory = null;
+			final String BEND_MAP_COLUMN = "BEND_MAP_ID";
+			EdgeBendVisualProperty ee = new EdgeBendVisualProperty(bend,suid,suid);
+			
+			final DiscreteMapping<Long, Bend> function = (DiscreteMapping<Long, Bend>) discreteFactory
+					.createVisualMappingFunction(BEND_MAP_COLUMN, Long.class, network.getDefaultEdgeTable(), ee);
+			function.putAll(mappingValues);*/
+        }
+        
+        
+
+        
+        
+        	for(CyEdge edge : groupCyEdge){
+
+        		edgeView = networkView.getEdgeView(edge); 
+        		bb = edgeView.getVisualProperty(BasicVisualLexicon.EDGE_BEND);
+            	java.util.List<Handle> handles = bb.getAllHandles();
+            	for(Handle h : handles)
+            		edgeView.setVisualProperty(BasicVisualLexicon.EDGE_LABEL, h.toString());
+            	
+        	}	
+            	//for (Handle handle : handles)
+            		//handle.defineHandle( networkView, (View<CyEdge>)  edgeView, 55.0, 55.0);
+            	
+            	
+            	
+        			/*final Map<Long, Bend> mappingValues;
+        			mappingValues = new HashMap<>();
+        			mappingValues.put(edgeView.getSUID(),bend);*/
+
+        			//hlist.get(0).defineHandle( networkView, (View<CyEdge>) edgeView, 50.0,50.0);
+
+        	
+        	
+        	
+        
+        //CyEdge edge = CyTableUtil.getEdgesInState(arg0, arg1, arg2);
+        //temp=0;
+
+        
 
         networkView.updateView();
 
 
     }
 }
+
