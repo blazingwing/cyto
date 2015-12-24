@@ -8,7 +8,8 @@ public class Term {
 
 	}
 	
-	public String Term_name=null;
-	public ArrayList<String> Term_node = new ArrayList<String>();
+	public String Name=null;
+	public ArrayList<String> Node = new ArrayList<String>();
+	public double pvalue=0;
 
 }

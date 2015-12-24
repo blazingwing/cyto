@@ -83,6 +83,7 @@ import org.osgi.service.condpermadmin.BundleLocationCondition;
 
 import static org.cytoscape.work.ServiceProperties.*;
 
+
 public class MenuAction extends AbstractCyAction {
     private final CyAppAdapter adapter;
 
@@ -99,7 +100,6 @@ public class MenuAction extends AbstractCyAction {
     }
      @SuppressWarnings({ "unused", "null" })
 	public void actionPerformed(ActionEvent e) {
-
     	
     	//new CyActivator();
         final CyApplicationManager manager = adapter.getCyApplicationManager();
@@ -141,11 +141,11 @@ public class MenuAction extends AbstractCyAction {
 			
 			while ((line = br.readLine())!=null) {
 				t_term = new Term();
-				t_term.Term_name = line;
+				t_term.Name = line;
 				line = br.readLine();
 				str = line.split(",");
 				for(int i=0;i<str.length;i++)
-					t_term.Term_node.add(str[i]);
+					t_term.Node.add(str[i]);
 				TermList.add(t_term);
 			}
 		} catch (IOException e1) {
@@ -153,15 +153,7 @@ public class MenuAction extends AbstractCyAction {
 			e1.printStackTrace();
 		}
 
-        //CyNode centroid = network.addNode();
-                
-        //network.getRow(centroid).set(CyNetwork.NAME, "Centroid");
-        //for (CyNode node : CyTableUtil.getNodesInState(network,"selected",true)/* network.getNodeList()*/) {
-        //	network.addEdge(centroid, node, true);
-       // }
 
-        //networkView.updateView();
-        //View<CyNode> nodeView = networkView.getNodeView(centroid);
 
         double x = 0;
         double y = 0;
@@ -179,6 +171,7 @@ public class MenuAction extends AbstractCyAction {
         	nodeView = networkView.getNodeView(node);
         	nodeView.setLockedValue(BasicVisualLexicon.NODE_LABEL_COLOR, Color.BLACK);
         	nodeView.setLockedValue(BasicVisualLexicon.NODE_LABEL_FONT_SIZE, 18);
+
         }
       //ALL Edge
         temp=0;
@@ -188,6 +181,7 @@ public class MenuAction extends AbstractCyAction {
         	edgeView.setLockedValue(BasicVisualLexicon.EDGE_LINE_TYPE, LineTypeVisualProperty.DASH_DOT);
         	temp++;
         }
+
       
         //Selected Node
         for (CyNode node : CyTableUtil.getNodesInState(network, "selected", true)){
@@ -206,7 +200,8 @@ public class MenuAction extends AbstractCyAction {
         	x += nodeView.getVisualProperty(BasicVisualLexicon.NODE_X_LOCATION);
         	y += nodeView.getVisualProperty(BasicVisualLexicon.NODE_Y_LOCATION);
         	
-       	
+        	
+        	
         	String name = nodeView.getVisualProperty(BasicVisualLexicon.NODE_LABEL);
         	//String key = String.valueOf(name.charAt(0));
         	/*----- Get Term -----*/
@@ -215,10 +210,10 @@ public class MenuAction extends AbstractCyAction {
         	boolean isIn = false;
         	for(int i=0;i<TermList.size();i++)
         	{
-        		if(TermList.get(i).Term_node.contains(key))
+        		if(TermList.get(i).Node.contains(key))
         		{
         			isIn = true;
-        			key = TermList.get(i).Term_name;
+        			key = TermList.get(i).Name;
         			break;
         		}
         	}
@@ -352,10 +347,6 @@ public class MenuAction extends AbstractCyAction {
         	temp+=1;        	
         	
         	
-        	/*String EDGE_BEND_DEFINITION = "3,0.003,0.3,500";
-        	BendFactory bendFactory = null;        	
-        	Bend defBend = bendFactory.parseSerializableString(EDGE_BEND_DEFINITION);*/
-        	
 
         	
         }
@@ -390,142 +381,12 @@ public class MenuAction extends AbstractCyAction {
         	}
         	
         	temp+=1;
+        	
         }
-        
+
         
         temp=0;
-        /* Bundle Edge */ 
-        
-        for (CyNode node : CyTableUtil.getNodesInState(network, "selected", true)){
-        	nodeView = networkView.getNodeView(node);
-        	x = nodeView.getVisualProperty(BasicVisualLexicon.NODE_X_LOCATION);
-        	y = nodeView.getVisualProperty(BasicVisualLexicon.NODE_Y_LOCATION);
-        	Core_node = node;
-        }
-        nodeView = networkView.getNodeView(Core_node);
-
-        ArrayList<CyEdge> Core_node_edge = (ArrayList<CyEdge>) network.getAdjacentEdgeList(Core_node,CyEdge.Type.ANY);
-
-        ArrayList<CyNode> groupCyNode = new ArrayList<CyNode>();
-    	ArrayList<CyEdge> groupCyEdge = new ArrayList<CyEdge>();
-        
-        for(int i=0;i<ClassList.size();i++){
-
-        	groupCyNode = new ArrayList<CyNode>();
-        	groupCyEdge = new ArrayList<CyEdge>();
-        	int gcn=0;
-        	int gce=0;
-
-        	double gx=0;
-        	double gy=0;
-
-        	int gc=0;
-        	temp=0;
-        	
-        	for(CyEdge edge:Core_node_edge){
-    			edgeView = networkView.getEdgeView(edge);
-    			nodeView = networkView.getNodeView(edge.getTarget());
-    			
-    			int c=-1;
-        		boolean isIn = false;
-        		String key = nodeView.getVisualProperty(BasicVisualLexicon.NODE_LABEL);
-        		for(int ki=0;ki<TermList.size();ki++){
-            		if(TermList.get(ki).Term_node.contains(key)){
-            			key = TermList.get(ki).Term_name;
-            			isIn = true;
-            			break;
-            		}
-        		}
-        		if(!isIn)
-        			key = "NaN";        		
-        		
-        		if(key.equals("NaN"))
-        			continue;
-        		else
-        			c = (int) ClassList.indexOf(key);
-        		
-        		
-        		if(i==c)
-        		{
-         			gx+=nodeView.getVisualProperty(BasicVisualLexicon.NODE_X_LOCATION);
-        			gy+=nodeView.getVisualProperty(BasicVisualLexicon.NODE_Y_LOCATION);   
-        			groupCyNode.add(edge.getTarget());
-        			gcn++;
-        			groupCyEdge.add(edge);
-        			gce++;
-        		}
-        		
-        	}
-        	
-        	gx/=groupCyNode.size();
-        	gy/=groupCyNode.size();
-        	
-
-        	        	
-        	for(CyEdge edge : groupCyEdge){
-
-        		edgeView = networkView.getEdgeView(edge); 
-        		bb = edgeView.getVisualProperty(BasicVisualLexicon.EDGE_BEND);
-            	java.util.List<Handle> handles = bb.getAllHandles();
-            	for(Handle h : handles)
-            		edgeView.setVisualProperty(BasicVisualLexicon.EDGE_LABEL, h.toString());
-            	
-        	}
-        	//bend.insertHandleAt(0, h);        	
-        	//edgeView.setVisualProperty(BasicVisualLexicon.EDGE_BEND, bend);
-        	
-        /*	BendFactory bf =null;
-			HandleFactory hf = null;
-			Bend bend = bf.createBend();
-			java.util.List<Handle> hlist = bend.getAllHandles();
-
-			final Handle h = hf.createHandle(gx/6.0, gy/6.0);
-			hlist.add(h);
-			final Map<Long, Bend> mappingValues;
-			mappingValues = new HashMap<>();
-			String suid = String.valueOf(edgeView.getSUID());
-			mappingValues.put(edgeView.getSUID(),bend);
-
-			final VisualMappingFunctionFactory discreteFactory = null;
-			final String BEND_MAP_COLUMN = "BEND_MAP_ID";
-			EdgeBendVisualProperty ee = new EdgeBendVisualProperty(bend,suid,suid);
-			
-			final DiscreteMapping<Long, Bend> function = (DiscreteMapping<Long, Bend>) discreteFactory
-					.createVisualMappingFunction(BEND_MAP_COLUMN, Long.class, network.getDefaultEdgeTable(), ee);
-			function.putAll(mappingValues);*/
-        }
-        
-        
-
-        
-        
-        	for(CyEdge edge : groupCyEdge){
-
-        		edgeView = networkView.getEdgeView(edge); 
-        		bb = edgeView.getVisualProperty(BasicVisualLexicon.EDGE_BEND);
-            	java.util.List<Handle> handles = bb.getAllHandles();
-            	for(Handle h : handles)
-            		edgeView.setVisualProperty(BasicVisualLexicon.EDGE_LABEL, h.toString());
-            	
-        	}	
-            	//for (Handle handle : handles)
-            		//handle.defineHandle( networkView, (View<CyEdge>)  edgeView, 55.0, 55.0);
-            	
-            	
-            	
-        			/*final Map<Long, Bend> mappingValues;
-        			mappingValues = new HashMap<>();
-        			mappingValues.put(edgeView.getSUID(),bend);*/
-
-        			//hlist.get(0).defineHandle( networkView, (View<CyEdge>) edgeView, 50.0,50.0);
-
-        	
-        	
-        	
-        
-        //CyEdge edge = CyTableUtil.getEdgesInState(arg0, arg1, arg2);
-        //temp=0;
-
+ 
         
 
         networkView.updateView();
@@ -533,4 +394,3 @@ public class MenuAction extends AbstractCyAction {
 
     }
 }
-
