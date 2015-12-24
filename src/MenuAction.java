@@ -12,6 +12,7 @@ import java.awt.Component;
 import java.awt.List;
 import java.awt.Shape;
 import java.lang.Math;
+import java.lang.reflect.Array;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.ArrayList;
@@ -108,9 +109,11 @@ public class MenuAction extends AbstractCyAction {
 
         String line = null;
         ArrayList<Term> TermList = new ArrayList<Term>();
+        ArrayList<Term> CmpTermList = new ArrayList<Term>();
         
         ArrayList<String> ClassList = new ArrayList<String>();
         ArrayList<String> Node_class = new ArrayList<String>();
+        ArrayList<String> Node_name = new ArrayList<String>();
         
         ArrayList<Integer> SiteList= new ArrayList<Integer>();
         ArrayList<Integer> SiteList_count = new ArrayList<Integer>();
@@ -123,37 +126,14 @@ public class MenuAction extends AbstractCyAction {
         View<CyEdge> edgeView = null;
 
         CyNode Core_node = null;
-        ArrayList<CyNode> Core_neighbor = new ArrayList<CyNode>();
         ArrayList<CyEdge> Core_edge = new ArrayList<CyEdge>();
+        
+        FisherExact fe = new FisherExact();
 				
         //-----Term-----
-        for (CyNode node : CyTableUtil.getNodesInState(network, "selected", true)){
-        	nodeView = networkView.getNodeView(node);
-        }
-        
-        InputStream is = MenuAction.class.getResourceAsStream("term.txt");
-        InputStreamReader isr = new InputStreamReader(is); 
-        BufferedReader br = new BufferedReader(isr);	
-
-        Term t_term = new Term();
-        String [] str=null;
-		try {
-			
-			while ((line = br.readLine())!=null) {
-				t_term = new Term();
-				t_term.Name = line;
-				line = br.readLine();
-				str = line.split(",");
-				for(int i=0;i<str.length;i++)
-					t_term.Node.add(str[i]);
-				TermList.add(t_term);
-			}
-		} catch (IOException e1) {
-			// TODO Auto-generated catch block
-			e1.printStackTrace();
-		}
-
-
+        FileFactory ff = new FileFactory();
+        TermList=ff.ReadTermTxt("term.txt");
+        CmpTermList=ff.ReadCmpTxt("cmp.txt");
 
         double x = 0;
         double y = 0;
@@ -165,6 +145,7 @@ public class MenuAction extends AbstractCyAction {
         double m = 0;
         double temp = 0;
         int layer = 0;
+        int ref_count=0;
         
         //ALL Node
         for(CyNode node : network.getNodeList()){
@@ -189,7 +170,6 @@ public class MenuAction extends AbstractCyAction {
         	x += nodeView.getVisualProperty(BasicVisualLexicon.NODE_X_LOCATION);
         	y += nodeView.getVisualProperty(BasicVisualLexicon.NODE_Y_LOCATION);
         	
-        	Core_neighbor = (ArrayList<CyNode>) network.getNeighborList(node, CyEdge.Type.ANY);
         	Core_edge = (ArrayList<CyEdge>) network.getAdjacentEdgeList(node,CyEdge.Type.ANY);
         	count1 += 1;
         }
@@ -203,14 +183,23 @@ public class MenuAction extends AbstractCyAction {
         	
         	
         	String name = nodeView.getVisualProperty(BasicVisualLexicon.NODE_LABEL);
+        	
         	//String key = String.valueOf(name.charAt(0));
         	/*----- Get Term -----*/
         	
         	String key = name;
+        	String key2 = name;
         	boolean isIn = false;
+        	
+        	for(int i=0;i<CmpTermList.size();i++)
+        	{
+        		key2=CmpTermList.get(i).Comparison(key);
+        		if(!key.equals(key2))
+        			break;
+        	}
         	for(int i=0;i<TermList.size();i++)
         	{
-        		if(TermList.get(i).Node.contains(key))
+        		if(TermList.get(i).InTerm(key) || TermList.get(i).InTerm(key2))
         		{
         			isIn = true;
         			key = TermList.get(i).Name;
@@ -246,27 +235,46 @@ public class MenuAction extends AbstractCyAction {
         		count2_withoutNan += 1;
         	}
         	Node_class.add(key);
+        	Node_name.add(key2);        	
         	
-        	
-        	count2 += 1;       	
-        	
-        }
+        	count2 += 1;
+        }        
         
+        count3 = count1 + count2;
+        for(int i=0;i<TermList.size();i++)
+                ref_count+=TermList.get(i).Node.size();
         
-        count3 = count1 + count2;        
-                
-        double a = x/count3;
-        double b = y/count3;
+        double xa = x/count3;
+        double xb = y/count3;
         
         for(int i=1;i<SiteList.size();i++)
         	SiteList.set(i, SiteList.get(i-1)+SiteList_count.get(i-1));
         if(SiteList.size()!=0)
         	if(NanSiteList_count>0)
         		NanSiteList.set(0, SiteList.get(SiteList.size()-1)+SiteList_count.get(SiteList_count.size()-1));
-
-        	
         
 
+        //-----Term p-value---
+        for(int i=0;i<TermList.size();i++)
+        {
+        	int a=0,b=0,c=0,d=0;
+        	for(int j=0;j<Node_name.size();j++)
+        		if(TermList.get(i).Node.contains(Node_name.get(j)))
+        			a++;
+        	b=(int)count2-a;
+        	for(int j=0;j<TermList.get(i).Node.size();j++)
+        		for(int k=0;k<TermList.size();k++)
+        		{
+        			if(i==k)
+        				continue;
+        			if(TermList.get(k).Node.contains(TermList.get(i).Node.get(j)))
+        				c++;
+        		}
+        	d=ref_count-c;
+        	TermList.get(i).pvalue=fe.getP(a, b, c, d);
+        }
+
+        
         Bend bb = null;
         
         
@@ -280,15 +288,15 @@ public class MenuAction extends AbstractCyAction {
         	//neighborList = network.getNeighborList(node, CyEdge.Type.ANY);
         	
         	m = (temp*360/count1)*Math.PI/180;
-        	nodeView.setVisualProperty(BasicVisualLexicon.NODE_X_LOCATION, (r*(count1-1))*Math.cos((temp*360/count1)*Math.PI/180)+a);
-        	nodeView.setVisualProperty(BasicVisualLexicon.NODE_Y_LOCATION, (r*(count1-1))*Math.sin((temp*360/count1)*Math.PI/180)+b);        	
+        	nodeView.setVisualProperty(BasicVisualLexicon.NODE_X_LOCATION, (r*(count1-1))*Math.cos((temp*360/count1)*Math.PI/180)+xa);
+        	nodeView.setVisualProperty(BasicVisualLexicon.NODE_Y_LOCATION, (r*(count1-1))*Math.sin((temp*360/count1)*Math.PI/180)+xb);        	
         	
         	nodeView.setLockedValue(BasicVisualLexicon.NODE_FILL_COLOR, Color.getHSBColor((float )0, (float) 0.4, (float) 0.7));
         	nodeView.setLockedValue(BasicVisualLexicon.NODE_BORDER_PAINT, Color.getHSBColor((float )0, (float) 0.4, (float) 0.7));
         	
         	nodeView.setLockedValue(BasicVisualLexicon.NODE_SHAPE, NodeShapeVisualProperty.DIAMOND);
         	nodeView.setLockedValue(BasicVisualLexicon.NODE_SIZE, 70.0);
-        	
+
         	temp+=1;           	
         }
      
@@ -303,8 +311,8 @@ public class MenuAction extends AbstractCyAction {
         	nodeView = networkView.getNodeView(node);
         	
         	m = (temp*360/count2)*Math.PI/180;
-        	nodeView.setVisualProperty(BasicVisualLexicon.NODE_X_LOCATION, (140+r*(count1-1)+r*(layer-(temp%layer))*layer)*Math.cos(m)+a);
-        	nodeView.setVisualProperty(BasicVisualLexicon.NODE_Y_LOCATION, (140+r*(count1-1)+r*(layer-(temp%layer))*layer)*Math.sin(m)+b);
+        	nodeView.setVisualProperty(BasicVisualLexicon.NODE_X_LOCATION, (140+r*(count1-1)+r*(layer-(temp%layer))*layer)*Math.cos(m)+xa);
+        	nodeView.setVisualProperty(BasicVisualLexicon.NODE_Y_LOCATION, (140+r*(count1-1)+r*(layer-(temp%layer))*layer)*Math.sin(m)+xb);
         	
         	/* Site add */
         	Node_x.add(nodeView.getVisualProperty(BasicVisualLexicon.NODE_X_LOCATION));
@@ -378,15 +386,19 @@ public class MenuAction extends AbstractCyAction {
         		nodeView.setVisualProperty(BasicVisualLexicon.NODE_Y_LOCATION, Node_y.get(SiteList.get(c)));
 
         		SiteList.set(c, SiteList.get(c)+1);
-        	}
+        		
+        	}  
         	
-        	temp+=1;
-        	
+        	temp += 1;
+
         }
+        temp = 0;
+        
+        
+        
 
         
-        temp=0;
- 
+        
         
 
         networkView.updateView();
