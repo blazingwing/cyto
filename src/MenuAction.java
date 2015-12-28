@@ -110,6 +110,7 @@ public class MenuAction extends AbstractCyAction {
         String line = null;
         ArrayList<Term> TermList = new ArrayList<Term>();
         ArrayList<Term> CmpTermList = new ArrayList<Term>();
+        ArrayList<Term> GroupList = new ArrayList<Term>();
         
         ArrayList<String> ClassList = new ArrayList<String>();
         ArrayList<String> Node_class = new ArrayList<String>();
@@ -128,7 +129,7 @@ public class MenuAction extends AbstractCyAction {
         CyNode Core_node = null;
         ArrayList<CyEdge> Core_edge = new ArrayList<CyEdge>();
         
-        FisherExact fe = new FisherExact();
+        MathFuction mf = new MathFuction();
 				
         //-----Term-----
         FileFactory ff = new FileFactory();
@@ -254,7 +255,7 @@ public class MenuAction extends AbstractCyAction {
         		NanSiteList.set(0, SiteList.get(SiteList.size()-1)+SiteList_count.get(SiteList_count.size()-1));
         
 
-        //-----Term p-value---
+        //-----Term FisherExcat p-value---
         for(int i=0;i<TermList.size();i++)
         {
         	int a=0,b=0,c=0,d=0;
@@ -271,8 +272,36 @@ public class MenuAction extends AbstractCyAction {
         				c++;
         		}
         	d=ref_count-c;
-        	TermList.get(i).pvalue=fe.getP(a, b, c, d);
+        	TermList.get(i).pvalue=mf.FisherExact_getP(a, b, c, d);
         }
+        
+        
+        //-----Term grouping Kappa p-value---
+        temp=0;
+        int[] GroupArrangementInt = new int[TermList.size()];
+        while(mf.Array_Sum(GroupArrangementInt)<TermList.size())
+        {
+        	mf.Leaf_Plus(GroupArrangementInt);
+        	
+        	ArrayList<Term> group = new ArrayList<Term>();
+        	for(int i=0;i<TermList.size();i++)
+        		if(GroupArrangementInt[i]>0)
+        			group.add(TermList.get(i));
+
+        	double k=mf.Kappa_getP(group);
+        	
+        	if(k>0.4){        		
+        		Term t = new Term();
+        		t.Name="Group"+String.valueOf(temp);
+        		for(int i=0;i<group.size();i++)
+        			t.Node.add(group.get(i).Name);
+        		
+        		GroupList.add(t);        		
+        	}
+        	
+        	temp++;
+        }
+        
 
         
         Bend bb = null;
