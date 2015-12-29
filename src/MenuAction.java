@@ -110,7 +110,8 @@ public class MenuAction extends AbstractCyAction {
         String line = null;
         ArrayList<Term> TermList = new ArrayList<Term>();
         ArrayList<Term> CmpTermList = new ArrayList<Term>();
-        ArrayList<Term> GroupList = new ArrayList<Term>();
+        ArrayList<Term> GroupGeneList = new ArrayList<Term>();
+        ArrayList<Term> GroupTermList = new ArrayList<Term>();
         
         ArrayList<String> ClassList = new ArrayList<String>();
         ArrayList<String> Node_class = new ArrayList<String>();
@@ -268,8 +269,10 @@ public class MenuAction extends AbstractCyAction {
         		{
         			if(i==k)
         				continue;
-        			if(TermList.get(k).Node.contains(TermList.get(i).Node.get(j)))
+        			if(TermList.get(k).Node.contains(TermList.get(i).Node.get(j))){
         				c++;
+        				break;
+        			}
         		}
         	d=ref_count-c;
         	TermList.get(i).pvalue=mf.FisherExact_getP(a, b, c, d);
@@ -294,14 +297,45 @@ public class MenuAction extends AbstractCyAction {
         		Term t = new Term();
         		t.Name="Group"+String.valueOf(temp);
         		for(int i=0;i<group.size();i++)
+        			for(int j=0;j<group.get(i).Node.size();j++)
+        				if(!t.Node.contains(group.get(i).Node.get(j)))
+        					t.Node.add(group.get(i).Node.get(j));
+        			
+        		GroupGeneList.add(t);     
+        		
+        		t = new Term();
+        		t.Name="Group"+String.valueOf(temp);
+        		for(int i=0;i<group.size();i++)
         			t.Node.add(group.get(i).Name);
         		
-        		GroupList.add(t);        		
+        		GroupTermList.add(t);
         	}
         	
         	temp++;
         }
         
+        
+      //-----Group FisherExcat p-value---
+        for(int i=0;i<GroupGeneList.size();i++)
+        {
+        	int a=0,b=0,c=0,d=0;
+        	for(int j=0;j<Node_name.size();j++)
+        		if(GroupGeneList.get(i).Node.contains(Node_name.get(j)))
+        			a++;
+        	b=(int)count2-a;
+        	for(int j=0;j<GroupGeneList.get(i).Node.size();j++)
+        		for(int k=0;k<GroupGeneList.size();k++)
+        		{
+        			if(i==k)
+        				continue;
+        			if(GroupGeneList.get(k).Node.contains(GroupGeneList.get(i).Node.get(j))){
+        				c++;
+        				break;
+        			}
+        		}
+        	d=ref_count-c;
+        	GroupGeneList.get(i).pvalue=mf.FisherExact_getP(a, b, c, d);
+        }
 
         
         Bend bb = null;
@@ -423,9 +457,6 @@ public class MenuAction extends AbstractCyAction {
         }
         temp = 0;
         
-        
-        
-
         
         
         
