@@ -112,6 +112,7 @@ public class MenuAction extends AbstractCyAction {
         ArrayList<Term> CmpTermList = new ArrayList<Term>();
         ArrayList<Term> GroupGeneList = new ArrayList<Term>();
         ArrayList<Term> GroupTermList = new ArrayList<Term>();
+        ArrayList<Term> GGList = new ArrayList<Term>();
         
         ArrayList<String> ClassList = new ArrayList<String>();
         ArrayList<String> Node_class = new ArrayList<String>();
@@ -180,63 +181,14 @@ public class MenuAction extends AbstractCyAction {
         for (CyNode node : CyTableUtil.getNodesInState(network, "selected", false)){
         	nodeView = networkView.getNodeView(node);
         	x += nodeView.getVisualProperty(BasicVisualLexicon.NODE_X_LOCATION);
-        	y += nodeView.getVisualProperty(BasicVisualLexicon.NODE_Y_LOCATION);
-        	
-        	
-        	
-        	String name = nodeView.getVisualProperty(BasicVisualLexicon.NODE_LABEL);
-        	
+
         	//String key = String.valueOf(name.charAt(0));
         	/*----- Get Term -----*/
-        	
+        	String name = nodeView.getVisualProperty(BasicVisualLexicon.NODE_LABEL);
         	String key = name;
         	String key2 = name;
-        	boolean isIn = false;
         	
-        	for(int i=0;i<CmpTermList.size();i++)
-        	{
-        		key2=CmpTermList.get(i).Comparison(key);
-        		if(!key.equals(key2))
-        			break;
-        	}
-        	for(int i=0;i<TermList.size();i++)
-        	{
-        		if(TermList.get(i).InTerm(key) || TermList.get(i).InTerm(key2))
-        		{
-        			isIn = true;
-        			key = TermList.get(i).Name;
-        			break;
-        		}
-        	}
-        	if(isIn==false)
-        	{
-        		key="NaN";
-        		if(NanSiteList_count>0)
-        		{
-        			NanSiteList_count+=1;
-        		}
-        		else
-        		{
-        			NanSiteList.add(0);
-        			NanSiteList_count+=1;
-        		} 
-        	}
-        	else
-        	{
-        		isIn = ClassList.contains(key);
-        		if(isIn==false)
-        		{
-        			ClassList.add(key);
-        			SiteList.add(0); 
-        			SiteList_count.add(1); 
-        		}
-        		else
-        		{
-        			SiteList_count.set(ClassList.indexOf(key), SiteList_count.get(ClassList.indexOf(key))+1);
-        		}
-        		count2_withoutNan += 1;
-        	}
-        	Node_class.add(key);
+        	key2=mf.TransCmp(CmpTermList, key);
         	Node_name.add(key2);        	
         	
         	count2 += 1;
@@ -249,11 +201,7 @@ public class MenuAction extends AbstractCyAction {
         double xa = x/count3;
         double xb = y/count3;
         
-        for(int i=1;i<SiteList.size();i++)
-        	SiteList.set(i, SiteList.get(i-1)+SiteList_count.get(i-1));
-        if(SiteList.size()!=0)
-        	if(NanSiteList_count>0)
-        		NanSiteList.set(0, SiteList.get(SiteList.size()-1)+SiteList_count.get(SiteList_count.size()-1));
+
         
 
         //-----Term FisherExcat p-value---
@@ -285,6 +233,8 @@ public class MenuAction extends AbstractCyAction {
         while(mf.Array_Sum(GroupArrangementInt)<TermList.size())
         {
         	mf.Leaf_Plus(GroupArrangementInt);
+        	if(mf.Array_Sum(GroupArrangementInt)<2)
+        		continue;
         	
         	ArrayList<Term> group = new ArrayList<Term>();
         	for(int i=0;i<TermList.size();i++)
@@ -293,7 +243,7 @@ public class MenuAction extends AbstractCyAction {
 
         	double k=mf.Kappa_getP(group);
         	
-        	if(k>0.4){        		
+        	if(k>0){        		
         		Term t = new Term();
         		t.Name="Group"+String.valueOf(temp);
         		for(int i=0;i<group.size();i++)
@@ -315,7 +265,7 @@ public class MenuAction extends AbstractCyAction {
         }
         
         
-      //-----Group FisherExcat p-value---
+        //-----Group FisherExcat p-value---
         for(int i=0;i<GroupGeneList.size();i++)
         {
         	int a=0,b=0,c=0,d=0;
@@ -335,8 +285,106 @@ public class MenuAction extends AbstractCyAction {
         		}
         	d=ref_count-c;
         	GroupGeneList.get(i).pvalue=mf.FisherExact_getP(a, b, c, d);
+        	GroupTermList.get(i).pvalue=GroupGeneList.get(i).pvalue;
         }
 
+        //-----Gene to find Term to find Group---
+        for(int i=0;i<Node_name.size();i++)
+        {
+        	ArrayList<Term> t = new ArrayList<Term>();
+        	ArrayList<Term> g = new ArrayList<Term>();
+        	
+        	for(int j=0;j<TermList.size();j++)
+        		if(TermList.get(j).Node.contains(Node_name.get(i)))
+        			t.add(TermList.get(j));
+        	if(t.size()==0)
+        		continue;
+        	Term tempt = mf.Min_P(t);
+        	
+        	for(int j=0;j<GroupTermList.size();j++)
+        		if(GroupTermList.get(j).Node.contains(tempt.Name))
+        			g.add(GroupTermList.get(j));
+        	if(g.size()==0)
+        		continue;        	
+        	Term tempg = mf.Min_P(g);
+        	
+        	int index = -1;
+        	for(int j=0;j<GGList.size();j++)
+        		if(GGList.get(j).InTerm(Node_name.get(i)))
+        			index = j;
+        	if(index>-1)
+        	{
+        		GGList.get(index).Node.add(Node_name.get(i));
+        	}
+        	else
+        	{
+        		Term tt = new Term();
+        		tt.Name = tempg.Name;
+        		tt.Node.add(Node_name.get(i));
+        		GGList.add(tt);
+        	}	
+        }
+        
+        
+        //****************************//
+        for (CyNode node : CyTableUtil.getNodesInState(network, "selected", false)){
+        	nodeView = networkView.getNodeView(node);
+        	
+        	String name = nodeView.getVisualProperty(BasicVisualLexicon.NODE_LABEL);
+        	String key = name;
+        	String key2 = mf.TransCmp(CmpTermList, key);
+        	boolean isIn = false;
+        	
+        	for(int i=0;i<GGList.size();i++)
+        	{
+        		if(GGList.get(i).InTerm(key) || GGList.get(i).InTerm(key2))
+        		{
+        			isIn = true;
+        			key = GGList.get(i).Name;
+        			break;
+        		}
+        	}
+        	if(isIn==false)
+        	{
+        		key="NaN";
+        		if(NanSiteList_count>0)
+        		{
+        			NanSiteList_count+=1;
+        		}
+        		else
+        		{
+        			NanSiteList.add(0);
+        			NanSiteList_count+=1;
+        		} 
+        	}
+        	else
+        	{
+        		isIn = ClassList.contains(key);
+        		if(isIn==false)
+        		{
+        			ClassList.add(key);
+        			SiteList.add(0); 
+        			SiteList_count.add(1); 
+        		}
+        		else
+        		{
+        			SiteList_count.set(ClassList.indexOf(key), SiteList_count.get(ClassList.indexOf(key))+1);
+        		}
+        		count2_withoutNan += 1;
+        	}
+        	Node_class.add(key); 
+        }        
+        
+        for(int i=1;i<SiteList.size();i++)
+        	SiteList.set(i, SiteList.get(i-1)+SiteList_count.get(i-1));
+        if(SiteList.size()!=0)
+        	if(NanSiteList_count>0)
+        		NanSiteList.set(0, SiteList.get(SiteList.size()-1)+SiteList_count.get(SiteList_count.size()-1));
+    	
+        
+        
+        
+        
         
         Bend bb = null;
         
