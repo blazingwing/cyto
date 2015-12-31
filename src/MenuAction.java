@@ -223,7 +223,7 @@ public class MenuAction extends AbstractCyAction {
         			}
         		}
         	d=ref_count-c;
-        	TermList.get(i).pvalue=mf.FisherExact_getP(a, b, c, d);
+        	TermList.get(i).pvalue=mf.FisherExact_LoggetP(a, b, c, d);
         }
         
         
@@ -284,7 +284,7 @@ public class MenuAction extends AbstractCyAction {
         			}
         		}
         	d=ref_count-c;
-        	GroupGeneList.get(i).pvalue=mf.FisherExact_getP(a, b, c, d);
+        	GroupGeneList.get(i).pvalue=mf.FisherExact_LoggetP(a, b, c, d);
         	GroupTermList.get(i).pvalue=GroupGeneList.get(i).pvalue;
         }
 

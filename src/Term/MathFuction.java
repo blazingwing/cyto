@@ -20,6 +20,23 @@ public class MathFuction {
 		 sum=sum.multiply(BigDecimal.valueOf(i));		 
 	 return sum;
  }
+ public double FisherExact_LoggetP(int a, int b, int c, int d) {
+     int n = a + b + c + d;
+     
+     double x = Logsum(a+b)+Logsum(c+d)+Logsum(a+c)+Logsum(b+d);
+     System.out.println(x);
+     double y = Logsum(a)+Logsum(b)+Logsum(c)+Logsum(d)+Logsum(n);
+     System.out.println(y);
+     double p = Math.pow(10, x-y);
+     
+     return p;
+ }
+ public double Logsum(int a){
+	 double s=Math.log10(1);
+	 for(int i=2;i<=a;i++)
+		 s+=Math.log10(i);
+	 return s;
+ }
  public double Kappa_getP(ArrayList<Term> t){
 	 int m=0;
 	 int s=t.size();
