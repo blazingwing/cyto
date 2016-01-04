@@ -229,38 +229,72 @@ public class MenuAction extends AbstractCyAction {
         
         //-----Term grouping Kappa p-value---
         temp=0;
-        int[] GroupArrangementInt = new int[TermList.size()];
-        while(mf.Array_Sum(GroupArrangementInt)<TermList.size())
+        double[][] GroupKappaTable = new double[TermList.size()][TermList.size()];
+        int[] TermToGroupIndex = new int[TermList.size()];
+        for(int i=0;i<TermList.size();i++)
         {
-        	mf.Leaf_Plus(GroupArrangementInt);
-        	if(mf.Array_Sum(GroupArrangementInt)<2)
+        	TermToGroupIndex[i]=-1;
+        	for(int j=i+1;j<TermList.size();j++)
+        	{
+        		ArrayList<Term> group = new ArrayList<Term>();
+        		group.add(TermList.get(i));
+        		group.add(TermList.get(j));
+        		double k=mf.Kappa_getP(group);
+        		GroupKappaTable[i][j]=k;
+        	}
+        }
+        for(int i=0;i<TermList.size();i++)
+        {
+        	if(TermToGroupIndex[i]==-1){
+        		TermToGroupIndex[i]=(int)temp;
+        		temp++;
+        	}
+        	int gi=TermToGroupIndex[i];
+        	for(int j=i+1;j<TermList.size();j++)
+        	{
+        		if(GroupKappaTable[i][j]>0.4){
+        			if(TermToGroupIndex[j]==-1){
+        				TermToGroupIndex[j]=gi;
+        			}
+        			else{
+        				for(int k=j;k>=i;k--)
+        					if(TermToGroupIndex[k]==gi)
+        						TermToGroupIndex[k]=TermToGroupIndex[j];
+        				gi=TermToGroupIndex[j];
+        			}
+        		}            		
+        	} 
+        }
+        int maxGroup=0;
+        temp=0;
+        for(int i=0;i<TermList.size();i++)
+        	if(maxGroup<TermToGroupIndex[i])
+        		maxGroup=TermToGroupIndex[i];
+        for(int i=0;i<maxGroup;i++){
+        	ArrayList<Term> group = new ArrayList<Term>();
+        	for(int j=0;j<TermList.size();j++)
+        		if(TermToGroupIndex[j]==i)
+        			group.add(TermList.get(j));
+        	
+        	if(group.size()<1)
         		continue;
         	
-        	ArrayList<Term> group = new ArrayList<Term>();
-        	for(int i=0;i<TermList.size();i++)
-        		if(GroupArrangementInt[i]>0)
-        			group.add(TermList.get(i));
-
-        	double k=mf.Kappa_getP(group);
-        	
-        	if(k>0){        		
-        		Term t = new Term();
-        		t.Name="Group"+String.valueOf(temp);
-        		for(int i=0;i<group.size();i++)
-        			for(int j=0;j<group.get(i).Node.size();j++)
-        				if(!t.Node.contains(group.get(i).Node.get(j)))
-        					t.Node.add(group.get(i).Node.get(j));
-        			
-        		GroupGeneList.add(t);     
-        		
-        		t = new Term();
-        		t.Name="Group"+String.valueOf(temp);
-        		for(int i=0;i<group.size();i++)
-        			t.Node.add(group.get(i).Name);
-        		
-        		GroupTermList.add(t);
-        	}
-        	
+        	Term t = new Term();
+    		t.Name="Group"+String.valueOf(temp);
+    		for(int j=0;j<group.size();j++)
+    			for(int k=0;k<group.get(j).Node.size();k++)
+    				if(!t.Node.contains(group.get(j).Node.get(k)))
+    					t.Node.add(group.get(j).Node.get(k));
+    			
+    		GroupGeneList.add(t);
+    		
+    		t = new Term();
+    		t.Name="Group"+String.valueOf(temp);
+    		for(int j=0;j<group.size();j++)
+    			t.Node.add(group.get(j).Name);
+    		
+    		GroupTermList.add(t);
+    		
         	temp++;
         }
         
@@ -310,7 +344,7 @@ public class MenuAction extends AbstractCyAction {
         	
         	int index = -1;
         	for(int j=0;j<GGList.size();j++)
-        		if(GGList.get(j).InTerm(Node_name.get(i)))
+        		if(GGList.get(j).Name.equals(tempg.Name))
         			index = j;
         	if(index>-1)
         	{

@@ -17,16 +17,17 @@ public class MathFuction {
  public BigDecimal FisherExact_product(int e){
 	 BigDecimal sum=BigDecimal.valueOf(1);
 	 for(int i=1;i<=e;i++)
-		 sum=sum.multiply(BigDecimal.valueOf(i));		 
+		 sum=sum.multiply(BigDecimal.valueOf(i));	
+	 //System.out.println(sum);
 	 return sum;
  }
  public double FisherExact_LoggetP(int a, int b, int c, int d) {
      int n = a + b + c + d;
      
      double x = Logsum(a+b)+Logsum(c+d)+Logsum(a+c)+Logsum(b+d);
-     System.out.println(x);
+     //System.out.println(x);
      double y = Logsum(a)+Logsum(b)+Logsum(c)+Logsum(d)+Logsum(n);
-     System.out.println(y);
+     //System.out.println(y);
      double p = Math.pow(10, x-y);
      
      return p;
@@ -42,40 +43,37 @@ public class MathFuction {
 	 int s=t.size();
 	 int[] kf = new int[s];
 	 int[] kg = new int[s];
+
 	 for(int i=0;i<s;i++){
-		 for(int j=0;j<s;j++){
-			 
-			 if(i==j){
-				 kf[i]+=t.get(i).Node.size();
-				 kg[j]+=t.get(i).Node.size();
-				 m+=t.get(i).Node.size();
-				 continue;
-			 }
-			 
+		 for(int j=i+1;j<s;j++){			 
 			 for(int k=0;k<t.get(i).Node.size();k++){
 				 String str=t.get(i).Node.get(k);
 				 if(t.get(j).Node.contains(str)){
-					 kf[j]++;
-					 kg[i]++;
+					 kf[i]++;
+					 kg[s-j-1]++;
+					 m++;
 				 }					 
 			 }
 		 }
 	 }
+	 for(int i=0;i<s;i++){
+		 kf[i]+=t.get(i).Node.size()-m;
+		 kg[s-i-1]+=t.get(i).Node.size()-m;
+	 }
 	 int n = Array_Sum(kf);
-	 double p0 = (double)m/n;
+	 double p0 = (double)m/n;	 
 	 double pc = 0;
 	 for(int i=0;i<kf.length;i++)
 		 pc+=(double)kf[i]*kg[i]/n;
 	 pc/=n;
 	 double k = (double)(p0-pc)/(1-pc);
-	 
 	 return k;
  }
  public int Array_Sum(int[] a){
 	 int s=0;
 	 for(int i=0;i<a.length;i++)
 		 if(a[i]>0)
-			 s++;
+			 s+=a[i];
 	 return s;	
  }
  public int[] Leaf_Plus(int []a){
@@ -87,7 +85,7 @@ public class MathFuction {
 		 if(a[i]>1){
 			 a[i]=0;
 			 a[i-1]++;
-		 }			 
+		 }
 	 return a;
  }
  public Term Min_P(ArrayList<Term> a){
