@@ -192,16 +192,26 @@ public class MenuAction extends AbstractCyAction {
         	Node_name.add(key2);        	
         	
         	count2 += 1;
-        }        
+        }
         
         count3 = count1 + count2;
+        
+        for(int i=0;i<TermList.size();){
+    		int a=0;
+    		for(int j=0;j<Node_name.size();j++)
+        		if(TermList.get(i).Node.contains(Node_name.get(j)))
+        			a++;
+    		if(a<1)
+    			TermList.remove(i);
+    		else
+    			i++;
+    	}        
+        
         for(int i=0;i<TermList.size();i++)
                 ref_count+=TermList.get(i).Node.size();
         
         double xa = x/count3;
         double xb = y/count3;
-        
-
         
 
         //-----Term FisherExcat p-value---
