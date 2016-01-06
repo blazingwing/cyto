@@ -172,6 +172,7 @@ public class MenuAction extends AbstractCyAction {
         	nodeView = networkView.getNodeView(node);
         	x += nodeView.getVisualProperty(BasicVisualLexicon.NODE_X_LOCATION);
         	y += nodeView.getVisualProperty(BasicVisualLexicon.NODE_Y_LOCATION);
+        	nodeView.setLockedValue(BasicVisualLexicon.NODE_LABEL_COLOR, Color.WHITE);
         	
         	Core_edge = (ArrayList<CyEdge>) network.getAdjacentEdgeList(node,CyEdge.Type.ANY);
         	count1 += 1;
@@ -455,8 +456,8 @@ public class MenuAction extends AbstractCyAction {
         	nodeView.setVisualProperty(BasicVisualLexicon.NODE_X_LOCATION, (r*(count1-1))*Math.cos((temp*360/count1)*Math.PI/180)+xa);
         	nodeView.setVisualProperty(BasicVisualLexicon.NODE_Y_LOCATION, (r*(count1-1))*Math.sin((temp*360/count1)*Math.PI/180)+xb);        	
         	
-        	nodeView.setLockedValue(BasicVisualLexicon.NODE_FILL_COLOR, Color.getHSBColor((float )0, (float) 0.4, (float) 0.7));
-        	nodeView.setLockedValue(BasicVisualLexicon.NODE_BORDER_PAINT, Color.getHSBColor((float )0, (float) 0.4, (float) 0.7));
+        	nodeView.setLockedValue(BasicVisualLexicon.NODE_FILL_COLOR, Color.getHSBColor((float )0, (float) 0.4, (float) 0));
+        	nodeView.setLockedValue(BasicVisualLexicon.NODE_BORDER_PAINT, Color.getHSBColor((float )0, (float) 0.4, (float) 0));
         	
         	nodeView.setLockedValue(BasicVisualLexicon.NODE_SHAPE, NodeShapeVisualProperty.DIAMOND);
         	nodeView.setLockedValue(BasicVisualLexicon.NODE_SIZE, 70.0);
@@ -497,8 +498,8 @@ public class MenuAction extends AbstractCyAction {
         	else
         	{
         		c = ClassList.indexOf(key);
-        		nodeView.setLockedValue(BasicVisualLexicon.NODE_FILL_COLOR, Color.getHSBColor((float) ((float)(c+count1)/(ClassList.size()+count1)), c2, c3));
-        		nodeView.setLockedValue(BasicVisualLexicon.NODE_BORDER_PAINT, Color.getHSBColor((float) ((float)(c+count1)/(ClassList.size()+count1)), c2, c3));
+        		nodeView.setLockedValue(BasicVisualLexicon.NODE_FILL_COLOR, Color.getHSBColor((float) ((float)((c/2)+(c%2==1?ClassList.size()/2:0))/ClassList.size()), c2, c3));
+        		nodeView.setLockedValue(BasicVisualLexicon.NODE_BORDER_PAINT, Color.getHSBColor((float) ((float)((c/2)+(c%2==1?ClassList.size()/2:0))/ClassList.size()), c2, c3));
         	}
         	
         	
@@ -508,7 +509,7 @@ public class MenuAction extends AbstractCyAction {
         			if(node_edge.get(i)==Core_edge.get(j))
         			{
         				edgeView = networkView.getEdgeView(node_edge.get(i));
-        				edgeView.setLockedValue(BasicVisualLexicon.EDGE_STROKE_UNSELECTED_PAINT, Color.getHSBColor((float) ((float)(c+count1)/(ClassList.size()+count1)), c2, c3));
+        				edgeView.setLockedValue(BasicVisualLexicon.EDGE_STROKE_UNSELECTED_PAINT, Color.getHSBColor((float) ((float)((c/2)+(c%2==1?ClassList.size()/2:0))/ClassList.size()), c2, c3));
         				edgeView.setLockedValue(BasicVisualLexicon.EDGE_TRANSPARENCY,250);
         				edgeView.setLockedValue(BasicVisualLexicon.EDGE_LINE_TYPE, LineTypeVisualProperty.SOLID);
         			}
