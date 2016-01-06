@@ -215,6 +215,7 @@ public class MenuAction extends AbstractCyAction {
         
 
         //-----Term FisherExcat p-value---
+        double[] TermpvalueTable = new double[TermList.size()];
         for(int i=0;i<TermList.size();i++)
         {
         	int a=0,b=0,c=0,d=0;
@@ -235,7 +236,9 @@ public class MenuAction extends AbstractCyAction {
         	d=ref_count-c;
         	TermList.get(i).pvalue=mf.FisherExact_LoggetP(a, b, c, d);
         }
-        
+        TermpvalueTable=mf.SortTable(TermpvalueTable);
+        for(int i=0;i<TermList.size();i++)
+        	TermList.get(i).pvalue=mf.FDR(TermList.get(i).pvalue, TermpvalueTable);
         
         //-----Term grouping Kappa p-value---
         temp=0;
@@ -310,6 +313,7 @@ public class MenuAction extends AbstractCyAction {
         
         
         //-----Group FisherExcat p-value---
+        double[] GrouppvalueTable = new double[GroupGeneList.size()];
         for(int i=0;i<GroupGeneList.size();i++)
         {
         	int a=0,b=0,c=0,d=0;
@@ -329,6 +333,11 @@ public class MenuAction extends AbstractCyAction {
         		}
         	d=ref_count-c;
         	GroupGeneList.get(i).pvalue=mf.FisherExact_LoggetP(a, b, c, d);
+        	GroupTermList.get(i).pvalue=GroupGeneList.get(i).pvalue;
+        }
+        GrouppvalueTable=mf.SortTable(GrouppvalueTable);
+        for(int i=0;i<GroupGeneList.size();i++){
+        	GroupGeneList.get(i).pvalue=mf.FDR(GroupGeneList.get(i).pvalue, GrouppvalueTable);
         	GroupTermList.get(i).pvalue=GroupGeneList.get(i).pvalue;
         }
 

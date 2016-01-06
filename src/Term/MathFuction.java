@@ -114,7 +114,28 @@ public class MathFuction {
  	 }
  	 return s;
  }
-
+ public double[] SortTable(double[] d){
+	 for(int i=0;i<d.length;i++)
+     	for(int j=i+1;j<d.length;j++)
+     		if(d[i]>d[j]){
+     			double tempd=d[i];
+     			d[i]=d[j];
+     			d[j]=tempd;
+     		} 
+	 return d;
+ }
+ public double FDR(double p, double[] ptable){
+	 int r=-1;
+	 for(int i=0;i<ptable.length;i++)
+		 if(p==ptable[i]){
+			 r=i;
+			 break;
+		 }
+	 if(r==-1)
+		 return p;
+	 p=p*ptable.length/r;
+	 return p;
+ }
  
 
 }
