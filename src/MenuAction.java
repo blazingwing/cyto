@@ -110,6 +110,7 @@ public class MenuAction extends AbstractCyAction {
         String line = null;
         ArrayList<Term> TermList = new ArrayList<Term>();
         ArrayList<Term> CmpTermList = new ArrayList<Term>();
+        ArrayList<Term> CmpTermList2 = new ArrayList<Term>();
         ArrayList<Term> GroupGeneList = new ArrayList<Term>();
         ArrayList<Term> GroupTermList = new ArrayList<Term>();
         ArrayList<Term> GGList = new ArrayList<Term>();
@@ -137,7 +138,8 @@ public class MenuAction extends AbstractCyAction {
         FileFactory ff = new FileFactory();
         TermList=ff.ReadTermTxt("term.txt");
         CmpTermList=ff.ReadCmpTxt("cmp.txt");
-
+        CmpTermList2=ff.ReadCmpTxt("cmp2.txt");
+        
         double x = 0;
         double y = 0;
         double count1 = 0;
@@ -182,15 +184,20 @@ public class MenuAction extends AbstractCyAction {
         for (CyNode node : CyTableUtil.getNodesInState(network, "selected", false)){
         	nodeView = networkView.getNodeView(node);
         	x += nodeView.getVisualProperty(BasicVisualLexicon.NODE_X_LOCATION);
-
+        	y += nodeView.getVisualProperty(BasicVisualLexicon.NODE_Y_LOCATION);
         	//String key = String.valueOf(name.charAt(0));
         	/*----- Get Term -----*/
         	String name = nodeView.getVisualProperty(BasicVisualLexicon.NODE_LABEL);
         	String key = name;
         	String key2 = name;
+        	String key3 = name;
         	
         	key2=mf.TransCmp(CmpTermList, key);
-        	Node_name.add(key2);        	
+        	key3=mf.TransCmp(CmpTermList2, key);
+        	if(!name.equals(key2))
+        		Node_name.add(key2);
+        	else
+        		Node_name.add(key3);
         	
         	count2 += 1;
         }
@@ -241,6 +248,8 @@ public class MenuAction extends AbstractCyAction {
         for(int i=0;i<TermList.size();i++)
         	TermList.get(i).pvalue=mf.FDR(TermList.get(i).pvalue, TermpvalueTable);
         
+        
+     
         //-----Term grouping Kappa p-value---
         temp=0;
         double[][] GroupKappaTable = new double[TermList.size()][TermList.size()];
@@ -311,8 +320,7 @@ public class MenuAction extends AbstractCyAction {
     		
         	temp++;
         }
-        
-        
+   
         //-----Group FisherExcat p-value---
         double[] GrouppvalueTable = new double[GroupGeneList.size()];
         for(int i=0;i<GroupGeneList.size();i++)
@@ -379,8 +387,8 @@ public class MenuAction extends AbstractCyAction {
         	}	
         }
         
-        
-        //****************************//
+
+        //****************************
         for (CyNode node : CyTableUtil.getNodesInState(network, "selected", false)){
         	nodeView = networkView.getNodeView(node);
         	
@@ -436,7 +444,7 @@ public class MenuAction extends AbstractCyAction {
         		NanSiteList.set(0, SiteList.get(SiteList.size()-1)+SiteList_count.get(SiteList_count.size()-1));
     	
         
-        
+
         
         
         
@@ -461,7 +469,6 @@ public class MenuAction extends AbstractCyAction {
         	
         	nodeView.setLockedValue(BasicVisualLexicon.NODE_SHAPE, NodeShapeVisualProperty.DIAMOND);
         	nodeView.setLockedValue(BasicVisualLexicon.NODE_SIZE, 70.0);
-
         	temp+=1;           	
         }
      
@@ -510,19 +517,17 @@ public class MenuAction extends AbstractCyAction {
         			{
         				edgeView = networkView.getEdgeView(node_edge.get(i));
         				edgeView.setLockedValue(BasicVisualLexicon.EDGE_STROKE_UNSELECTED_PAINT, Color.getHSBColor((float) ((float)((c/2)+(c%2==1?ClassList.size()/2:0))/ClassList.size()), c2, c3));
-        				edgeView.setLockedValue(BasicVisualLexicon.EDGE_TRANSPARENCY,250);
+        				edgeView.setLockedValue(BasicVisualLexicon.EDGE_TRANSPARENCY,200);
         				edgeView.setLockedValue(BasicVisualLexicon.EDGE_LINE_TYPE, LineTypeVisualProperty.SOLID);
         			}
 
         	nodeView.setLockedValue(BasicVisualLexicon.NODE_SHAPE, NodeShapeVisualProperty.ELLIPSE);
         	nodeView.setLockedValue(BasicVisualLexicon.NODE_SIZE, 60.0);
         	
-        	temp+=1;        	
-        	
-        	
-
-        	
+        	temp+=1;
         }
+        
+        
         
         /* Change Site */
         temp = 0;
@@ -554,7 +559,7 @@ public class MenuAction extends AbstractCyAction {
         		
         	}  
         	
-        	temp += 1;
+        	temp += 1;        	
 
         }
         temp = 0;
