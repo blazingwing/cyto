@@ -395,11 +395,12 @@ public class MenuAction extends AbstractCyAction {
         	String name = nodeView.getVisualProperty(BasicVisualLexicon.NODE_LABEL);
         	String key = name;
         	String key2 = mf.TransCmp(CmpTermList, key);
+        	String key3 = mf.TransCmp(CmpTermList2, key);
         	boolean isIn = false;
         	
         	for(int i=0;i<GGList.size();i++)
         	{
-        		if(GGList.get(i).InTerm(key) || GGList.get(i).InTerm(key2))
+        		if(GGList.get(i).InTerm(key) || GGList.get(i).InTerm(key2) || GGList.get(i).InTerm(key3))
         		{
         			isIn = true;
         			key = GGList.get(i).Name;
@@ -505,8 +506,10 @@ public class MenuAction extends AbstractCyAction {
         	else
         	{
         		c = ClassList.indexOf(key);
-        		nodeView.setLockedValue(BasicVisualLexicon.NODE_FILL_COLOR, Color.getHSBColor((float) ((float)((c/2)+(c%2==1?ClassList.size()/2:0))/ClassList.size()), c2, c3));
-        		nodeView.setLockedValue(BasicVisualLexicon.NODE_BORDER_PAINT, Color.getHSBColor((float) ((float)((c/2)+(c%2==1?ClassList.size()/2:0))/ClassList.size()), c2, c3));
+        		//nodeView.setLockedValue(BasicVisualLexicon.NODE_FILL_COLOR, Color.getHSBColor((float) ((float)((c/2)+(c%2==1?ClassList.size()/2:0))/ClassList.size()), c2, c3));
+        		//nodeView.setLockedValue(BasicVisualLexicon.NODE_BORDER_PAINT, Color.getHSBColor((float) ((float)((c/2)+(c%2==1?ClassList.size()/2:0))/ClassList.size()), c2, c3));
+        		nodeView.setLockedValue(BasicVisualLexicon.NODE_FILL_COLOR, Color.getHSBColor((float) ((float)c/ClassList.size()), c2, c3));
+        		nodeView.setLockedValue(BasicVisualLexicon.NODE_BORDER_PAINT, Color.getHSBColor((float) ((float)c/ClassList.size()), c2, c3));
         	}
         	
         	
@@ -516,7 +519,8 @@ public class MenuAction extends AbstractCyAction {
         			if(node_edge.get(i)==Core_edge.get(j))
         			{
         				edgeView = networkView.getEdgeView(node_edge.get(i));
-        				edgeView.setLockedValue(BasicVisualLexicon.EDGE_STROKE_UNSELECTED_PAINT, Color.getHSBColor((float) ((float)((c/2)+(c%2==1?ClassList.size()/2:0))/ClassList.size()), c2, c3));
+        				//edgeView.setLockedValue(BasicVisualLexicon.EDGE_STROKE_UNSELECTED_PAINT, Color.getHSBColor((float) ((float)((c/2)+(c%2==1?ClassList.size()/2:0))/ClassList.size()), c2, c3));
+        				edgeView.setLockedValue(BasicVisualLexicon.EDGE_STROKE_UNSELECTED_PAINT, Color.getHSBColor((float) ((float)c/ClassList.size()), c2, c3));
         				edgeView.setLockedValue(BasicVisualLexicon.EDGE_TRANSPARENCY,200);
         				edgeView.setLockedValue(BasicVisualLexicon.EDGE_LINE_TYPE, LineTypeVisualProperty.SOLID);
         			}
