@@ -109,6 +109,7 @@ public class MenuAction extends AbstractCyAction {
 
         String line = null;
         ArrayList<Term> TermList = new ArrayList<Term>();
+        ArrayList<Term> TermList_o = new ArrayList<Term>();
         ArrayList<Term> CmpTermList = new ArrayList<Term>();
         ArrayList<Term> CmpTermList2 = new ArrayList<Term>();
         ArrayList<Term> GroupGeneList = new ArrayList<Term>();
@@ -136,7 +137,7 @@ public class MenuAction extends AbstractCyAction {
 				
         //-----Term-----
         FileFactory ff = new FileFactory();
-        TermList=ff.ReadTermTxt("term.txt");
+        TermList_o=ff.ReadTermTxt("term.txt");
         CmpTermList=ff.ReadCmpTxt("cmp.txt");
         CmpTermList2=ff.ReadCmpTxt("cmp2.txt");
         
@@ -157,6 +158,7 @@ public class MenuAction extends AbstractCyAction {
         	nodeView = networkView.getNodeView(node);
         	nodeView.setLockedValue(BasicVisualLexicon.NODE_LABEL_COLOR, Color.BLACK);
         	nodeView.setLockedValue(BasicVisualLexicon.NODE_LABEL_FONT_SIZE, 18);
+        	nodeView.setLockedValue(BasicVisualLexicon.NODE_BORDER_WIDTH, (double)0);
 
         }
       //ALL Edge
@@ -204,15 +206,13 @@ public class MenuAction extends AbstractCyAction {
         
         count3 = count1 + count2;
         
-        for(int i=0;i<TermList.size();){
+        for(int i=0;i<TermList_o.size();i++){
     		int a=0;
     		for(int j=0;j<Node_name.size();j++)
-        		if(TermList.get(i).Node.contains(Node_name.get(j)))
+        		if(TermList_o.get(i).Node.contains(Node_name.get(j)))
         			a++;
-    		if(a<1)
-    			TermList.remove(i);
-    		else
-    			i++;
+    		if(a>0)
+    			TermList.add(TermList_o.get(i));
     	}        
         
         for(int i=0;i<TermList.size();i++)
@@ -495,7 +495,7 @@ public class MenuAction extends AbstractCyAction {
         	String key = Node_class.get((int)temp);        	
         	
         	float c2 = (float) 0.85;
-        	float c3 = (float) 0.85;
+        	float c3 = (float) 0.9;
         	if(key.equals("NaN"))
         	{
         		c2 = (float) 0.05;
