@@ -66,6 +66,8 @@ public class MathFuction {
 	 for(int i=0;i<kf.length;i++)
 		 pc+=(double)kf[i]*kg[i]/n;
 	 pc/=n;
+	 if(pc==1)
+		 return p0;
 	 double k = (double)(p0-pc)/(1-pc);
 	 return k;
  }

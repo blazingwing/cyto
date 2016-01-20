@@ -23,7 +23,10 @@ public class FileFactory {
 		
 			while ((line = br.readLine())!=null) {
 				t_term = new Term();
-				t_term.Name = line;
+				str = line.split(",");
+				t_term.Name = str[0];
+				t_term.Function = str[1];
+				
 				line = br.readLine();
 				str = line.split(",");
 				for(int i=0;i<str.length;i++)

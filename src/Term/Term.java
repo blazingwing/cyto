@@ -9,6 +9,7 @@ public class Term {
 	}
 	
 	public String Name=null;
+	public String Function=null;
 	public ArrayList<String> Node = new ArrayList<String>();
 	public double pvalue=0;
 	

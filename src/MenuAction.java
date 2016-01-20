@@ -137,9 +137,9 @@ public class MenuAction extends AbstractCyAction {
 				
         //-----Term-----
         FileFactory ff = new FileFactory();
-        TermList_o=ff.ReadTermTxt("term.txt");
-        CmpTermList=ff.ReadCmpTxt("cmp.txt");
-        CmpTermList2=ff.ReadCmpTxt("cmp2.txt");
+        TermList_o=ff.ReadTermTxt("homo_term.txt");
+        CmpTermList=ff.ReadCmpTxt("homo_cmp.txt");
+        CmpTermList2=ff.ReadCmpTxt("homo_cmp2.txt");
         
         double x = 0;
         double y = 0;
