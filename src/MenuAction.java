@@ -110,6 +110,7 @@ public class MenuAction extends AbstractCyAction {
         String line = null;
         ArrayList<Term> TermList = new ArrayList<Term>();
         ArrayList<Term> TermList_o = new ArrayList<Term>();
+        ArrayList<Integer> TermList_index = new ArrayList<Integer>();
         ArrayList<Term> CmpTermList = new ArrayList<Term>();
         ArrayList<Term> CmpTermList2 = new ArrayList<Term>();
         ArrayList<Term> GroupGeneList = new ArrayList<Term>();
@@ -140,7 +141,8 @@ public class MenuAction extends AbstractCyAction {
         TermList_o=ff.ReadTermTxt("homo_term.txt");
         CmpTermList=ff.ReadCmpTxt("homo_cmp.txt");
         CmpTermList2=ff.ReadCmpTxt("homo_cmp2.txt");
-        
+    	double[][] Kappa=ff.ReadKappaTxt("kappa.txt", TermList_o.size());   
+    	
         double x = 0;
         double y = 0;
         double count1 = 0;
@@ -211,8 +213,10 @@ public class MenuAction extends AbstractCyAction {
     		for(int j=0;j<Node_name.size();j++)
         		if(TermList_o.get(i).Node.contains(Node_name.get(j)))
         			a++;
-    		if(a>0)
+    		if(a>0){
     			TermList.add(TermList_o.get(i));
+    			TermList_index.add(i);
+    		}
     	}        
         
         for(int i=0;i<TermList.size();i++)
@@ -262,7 +266,7 @@ public class MenuAction extends AbstractCyAction {
         		ArrayList<Term> group = new ArrayList<Term>();
         		group.add(TermList.get(i));
         		group.add(TermList.get(j));
-        		double k=mf.Kappa_getP(group);
+        		double k=Kappa[TermList_index.get(i)][TermList_index.get(j)];
         		GroupKappaTable[i][j]=k;
         	}
         }
