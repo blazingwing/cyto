@@ -84,7 +84,6 @@ import org.osgi.service.condpermadmin.BundleLocationCondition;
 
 import static org.cytoscape.work.ServiceProperties.*;
 
-
 public class MenuAction extends AbstractCyAction {
     private final CyAppAdapter adapter;
 
@@ -116,6 +115,7 @@ public class MenuAction extends AbstractCyAction {
         ArrayList<Term> GroupGeneList = new ArrayList<Term>();
         ArrayList<Term> GroupTermList = new ArrayList<Term>();
         ArrayList<Term> GGList = new ArrayList<Term>();
+        ArrayList<Double> AnnotationSite = new ArrayList<Double>();
         
         ArrayList<String> ClassList = new ArrayList<String>();
         ArrayList<String> Node_class = new ArrayList<String>();
@@ -141,7 +141,7 @@ public class MenuAction extends AbstractCyAction {
         TermList_o=ff.ReadTermTxt("homo_term.txt");
         CmpTermList=ff.ReadCmpTxt("homo_cmp.txt");
         CmpTermList2=ff.ReadCmpTxt("homo_cmp2.txt");
-    	double[][] Kappa=ff.ReadKappaTxt("kappa.txt", TermList_o.size());   
+    	//double[][] Kappa=ff.ReadKappaTxt("homo_kappa.txt", TermList_o.size());   
     	
         double x = 0;
         double y = 0;
@@ -149,7 +149,7 @@ public class MenuAction extends AbstractCyAction {
         double count2 = 0; 
         double count2_withoutNan = 0;
         double count3 = 0;
-        double r = 15;
+        double r = 18;
         double m = 0;
         double temp = 0;
         int layer = 0;
@@ -159,7 +159,7 @@ public class MenuAction extends AbstractCyAction {
         for(CyNode node : network.getNodeList()){
         	nodeView = networkView.getNodeView(node);
         	nodeView.setLockedValue(BasicVisualLexicon.NODE_LABEL_COLOR, Color.BLACK);
-        	nodeView.setLockedValue(BasicVisualLexicon.NODE_LABEL_FONT_SIZE, 18);
+        	nodeView.setLockedValue(BasicVisualLexicon.NODE_LABEL_FONT_SIZE, 20);
         	nodeView.setLockedValue(BasicVisualLexicon.NODE_BORDER_WIDTH, (double)0);
 
         }
@@ -250,7 +250,7 @@ public class MenuAction extends AbstractCyAction {
         }
         TermpvalueTable=mf.SortTable(TermpvalueTable);
         for(int i=0;i<TermList.size();i++)
-        	TermList.get(i).pvalue=mf.FDR(TermList.get(i).pvalue, TermpvalueTable);
+        	TermList.get(i).qvalue=mf.FDR(TermList.get(i).pvalue, TermpvalueTable);
         
         
      
@@ -266,7 +266,10 @@ public class MenuAction extends AbstractCyAction {
         		ArrayList<Term> group = new ArrayList<Term>();
         		group.add(TermList.get(i));
         		group.add(TermList.get(j));
-        		double k=Kappa[TermList_index.get(i)][TermList_index.get(j)];
+        		double k=mf.Kappa_getP(group, Node_name);
+        		//double k=Kappa[TermList_index.get(i)][TermList_index.get(j)];
+        		//double k=ff.GetKappaTxt("homo_kappa.txt", i, j);
+        		
         		GroupKappaTable[i][j]=k;
         	}
         }
@@ -306,8 +309,10 @@ public class MenuAction extends AbstractCyAction {
         	if(group.size()<1)
         		continue;
         	
+        	String group_name = mf.Min_P(group).Function;
+        	
         	Term t = new Term();
-    		t.Name="Group"+String.valueOf(temp);
+    		t.Name=group_name;
     		for(int j=0;j<group.size();j++)
     			for(int k=0;k<group.get(j).Node.size();k++)
     				if(!t.Node.contains(group.get(j).Node.get(k)))
@@ -315,12 +320,12 @@ public class MenuAction extends AbstractCyAction {
     			
     		GroupGeneList.add(t);
     		
-    		t = new Term();
-    		t.Name="Group"+String.valueOf(temp);
+    		Term tt = new Term();
+    		tt.Name=group_name;
     		for(int j=0;j<group.size();j++)
-    			t.Node.add(group.get(j).Name);
+    			tt.Node.add(group.get(j).Name);
     		
-    		GroupTermList.add(t);
+    		GroupTermList.add(tt);
     		
         	temp++;
         }
@@ -350,8 +355,8 @@ public class MenuAction extends AbstractCyAction {
         }
         GrouppvalueTable=mf.SortTable(GrouppvalueTable);
         for(int i=0;i<GroupGeneList.size();i++){
-        	GroupGeneList.get(i).pvalue=mf.FDR(GroupGeneList.get(i).pvalue, GrouppvalueTable);
-        	GroupTermList.get(i).pvalue=GroupGeneList.get(i).pvalue;
+        	GroupGeneList.get(i).qvalue=mf.FDR(GroupGeneList.get(i).pvalue, GrouppvalueTable);
+        	GroupTermList.get(i).qvalue=GroupGeneList.get(i).qvalue;
         }
 
         //-----Gene to find Term to find Group---
@@ -365,14 +370,14 @@ public class MenuAction extends AbstractCyAction {
         			t.add(TermList.get(j));
         	if(t.size()==0)
         		continue;
-        	Term tempt = mf.Min_P(t);
+        	Term tempt = mf.Min_Q(t);
         	
         	for(int j=0;j<GroupTermList.size();j++)
         		if(GroupTermList.get(j).Node.contains(tempt.Name))
         			g.add(GroupTermList.get(j));
         	if(g.size()==0)
         		continue;        	
-        	Term tempg = mf.Min_P(g);
+        	Term tempg = mf.Min_Q(g);
         	
         	int index = -1;
         	for(int j=0;j<GGList.size();j++)
@@ -386,6 +391,7 @@ public class MenuAction extends AbstractCyAction {
         	{
         		Term tt = new Term();
         		tt.Name = tempg.Name;
+        		tt.Function = tempg.Name;
         		tt.Node.add(Node_name.get(i));
         		GGList.add(tt);
         	}	
@@ -474,7 +480,7 @@ public class MenuAction extends AbstractCyAction {
         	
         	nodeView.setLockedValue(BasicVisualLexicon.NODE_SHAPE, NodeShapeVisualProperty.DIAMOND);
         	nodeView.setLockedValue(BasicVisualLexicon.NODE_SIZE, 70.0);
-        	temp+=1;           	
+        	temp+=1;
         }
      
         
@@ -495,7 +501,7 @@ public class MenuAction extends AbstractCyAction {
         	Node_x.add(nodeView.getVisualProperty(BasicVisualLexicon.NODE_X_LOCATION));
         	Node_y.add(nodeView.getVisualProperty(BasicVisualLexicon.NODE_Y_LOCATION));
         	
-        	int c = 0;
+        	double c = 0;
         	String key = Node_class.get((int)temp);        	
         	
         	float c2 = (float) 0.85;
@@ -510,6 +516,8 @@ public class MenuAction extends AbstractCyAction {
         	else
         	{
         		c = ClassList.indexOf(key);
+        		if(c==0 && SiteList_count.get(0)>3)
+        			c+=0.5;
         		//nodeView.setLockedValue(BasicVisualLexicon.NODE_FILL_COLOR, Color.getHSBColor((float) ((float)((c/2)+(c%2==1?ClassList.size()/2:0))/ClassList.size()), c2, c3));
         		//nodeView.setLockedValue(BasicVisualLexicon.NODE_BORDER_PAINT, Color.getHSBColor((float) ((float)((c/2)+(c%2==1?ClassList.size()/2:0))/ClassList.size()), c2, c3));
         		nodeView.setLockedValue(BasicVisualLexicon.NODE_FILL_COLOR, Color.getHSBColor((float) ((float)c/ClassList.size()), c2, c3));
@@ -533,10 +541,12 @@ public class MenuAction extends AbstractCyAction {
         	nodeView.setLockedValue(BasicVisualLexicon.NODE_SIZE, 60.0);
         	
         	temp+=1;
+        } 
+        
+        
+        for(int i=0;i<SiteList.size();i++){
+        	AnnotationSite.add(((double)SiteList_count.get(i)/2+SiteList.get(i)));
         }
-        
-        
-        
         /* Change Site */
         temp = 0;
         for (CyNode node : CyTableUtil.getNodesInState(network, "selected", false)){
@@ -550,8 +560,7 @@ public class MenuAction extends AbstractCyAction {
         	{	
         		
         		nodeView.setVisualProperty(BasicVisualLexicon.NODE_X_LOCATION, Node_x.get(NanSiteList.get(0)));
-        		nodeView.setVisualProperty(BasicVisualLexicon.NODE_Y_LOCATION, Node_y.get(NanSiteList.get(0)));
-        		
+        		nodeView.setVisualProperty(BasicVisualLexicon.NODE_Y_LOCATION, Node_y.get(NanSiteList.get(0)));        		
         		NanSiteList.set(0, NanSiteList.get(0)+1);
 
         	}
@@ -562,7 +571,6 @@ public class MenuAction extends AbstractCyAction {
      	
         		nodeView.setVisualProperty(BasicVisualLexicon.NODE_X_LOCATION, Node_x.get(SiteList.get(c)));
         		nodeView.setVisualProperty(BasicVisualLexicon.NODE_Y_LOCATION, Node_y.get(SiteList.get(c)));
-
         		SiteList.set(c, SiteList.get(c)+1);
         		
         	}  
@@ -570,9 +578,42 @@ public class MenuAction extends AbstractCyAction {
         	temp += 1;        	
 
         }
+        
+        /* Add Annotation */
         temp = 0;
         
-        
+        for(int i=0;i<GGList.size();i++){
+        	CyNode centroid = network.addNode();
+        	
+        	network.getRow(centroid).set(CyNetwork.NAME, GGList.get(i).Function);
+        	
+        	networkView.updateView();
+        	
+        	double num = AnnotationSite.get(i);
+        	m = (num*360/count2)*Math.PI/180;
+        	
+        	double c=0;
+        	float c2 = (float) 0.85;
+        	float c3 = (float) 0.9;
+    		if(i==0 && SiteList_count.get(0)>3)
+    			c+=0.5;
+    		else
+    			c=i;
+        	nodeView = networkView.getNodeView(centroid);
+
+        	nodeView.setVisualProperty(BasicVisualLexicon.NODE_X_LOCATION, (170+r*(count1-1)+r*layer*layer)*Math.cos(m)+xa);
+        	nodeView.setVisualProperty(BasicVisualLexicon.NODE_Y_LOCATION, (170+r*(count1-1)+r*layer*layer)*Math.sin(m)+xb);
+        	
+        	nodeView.setLockedValue(BasicVisualLexicon.NODE_LABEL, GGList.get(i).Name);
+        	
+        	nodeView.setLockedValue(BasicVisualLexicon.NODE_LABEL_FONT_SIZE, 24);
+        	nodeView.setLockedValue(BasicVisualLexicon.NODE_TRANSPARENCY, 0);
+        	nodeView.setLockedValue(BasicVisualLexicon.NODE_BORDER_TRANSPARENCY, 0);
+        	nodeView.setLockedValue(BasicVisualLexicon.NODE_LABEL_COLOR, Color.getHSBColor((float) ((float)c/ClassList.size()), c2, c3));
+            
+            networkView.updateView();
+        	
+        }
         
         
 

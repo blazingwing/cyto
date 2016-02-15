@@ -19,16 +19,17 @@ public class FileFactory {
 		ArrayList<Term> TermList = new ArrayList<Term>();
 		Term t_term = new Term();
 		String [] str=null;
-		try {
-		
+		try {		
 			while ((line = br.readLine())!=null) {
 				t_term = new Term();
-				str = line.split(",");
+				str = line.split(";");
 				t_term.Name = str[0];
 				t_term.Function = str[1];
+				t_term.level_min = Integer.parseInt(str[2]);
+				t_term.level_max = Integer.parseInt(str[3]);
 				
 				line = br.readLine();
-				str = line.split(",");
+				str = line.split(";");
 				for(int i=0;i<str.length;i++)
 					t_term.Node.add(str[i]);
 				TermList.add(t_term);
@@ -67,6 +68,33 @@ public class FileFactory {
 		}
 		return CmpList;
 	}
+	public ArrayList<String> ReadTestTxt(String fstr){
+		
+		String line = null;
+	
+		InputStream is = MenuAction.class.getResourceAsStream(fstr);
+		InputStreamReader isr = new InputStreamReader(is); 
+		BufferedReader br = new BufferedReader(isr);	
+
+		ArrayList<String> NodeList = new ArrayList<String>();
+		String [] str=null;
+		try {
+		
+			while ((line = br.readLine())!=null) {
+				str = line.split("\t");
+
+				if(!str[0].equals("CORE")&&!str[0].equals("PPI"))
+					if(!NodeList.contains(str[0]))
+						NodeList.add(str[0]);
+				if(!NodeList.contains(str[1]))
+					NodeList.add(str[1]);
+			}
+		} catch (IOException e1) {
+		//TODO Auto-generated catch block
+			e1.printStackTrace();
+		}
+		return NodeList;
+	}
 	public double[][] ReadKappaTxt(String fstr, int size){
 		
 		String line = null;
@@ -98,5 +126,43 @@ public class FileFactory {
 			e1.printStackTrace();
 		}		
 		return g;
+	}
+	
+	public double GetKappaTxt(String fstr,int r, int c){
+		double k=0;
+		int i = 0;
+		
+		if(r==c)
+			return 1;
+		if(r>c){
+			int temp=r;
+			r=c;
+			c=temp;
+		}	
+		
+		String line = null;
+		
+		InputStream is = MenuAction.class.getResourceAsStream(fstr);
+		InputStreamReader isr = new InputStreamReader(is); 
+		BufferedReader br = new BufferedReader(isr);
+		
+		try {
+			line = br.readLine();
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		i++;
+		
+		for(;line!=null;i++) {
+			
+			if(i!=r)
+				continue;
+			String [] str = line.split(",");
+			
+			return Double.parseDouble(str[c-r-1]);
+		}		
+		
+		return k;
 	}
 }

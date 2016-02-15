@@ -38,28 +38,35 @@ public class MathFuction {
 		 s+=Math.log10(i);
 	 return s;
  }
- public double Kappa_getP(ArrayList<Term> t){
+ public double Kappa_getP(ArrayList<Term> t, ArrayList<String> imp){
 	 int m=0;
 	 int s=t.size();
 	 int[] kf = new int[s];
 	 int[] kg = new int[s];
+	 
 
-	 for(int i=0;i<s;i++){
-		 for(int j=i+1;j<s;j++){			 
-			 for(int k=0;k<t.get(i).Node.size();k++){
-				 String str=t.get(i).Node.get(k);
-				 if(t.get(j).Node.contains(str)){
-					 kf[i]++;
-					 kg[s-j-1]++;
-					 m++;
-				 }					 
-			 }
-		 }
-	 }
-	 for(int i=0;i<s;i++){
-		 kf[i]+=t.get(i).Node.size()-m;
-		 kg[s-i-1]+=t.get(i).Node.size()-m;
-	 }
+	 for(int k=0;k<imp.size();k++){
+		String str=imp.get(k);
+		if(t.get(0).InTerm(str)&&t.get(1).InTerm(str)){
+			kf[0]++;
+			kg[0]++;
+			m++;
+		}
+		else if(t.get(0).InTerm(str)){
+			kf[0]++;
+			kg[1]++;
+		}
+		else if(t.get(1).InTerm(str)){
+			kf[1]++;
+			kg[0]++;
+		}
+		else{
+			kf[1]++;
+			kg[1]++;
+			m++;
+		}
+	}
+
 	 int n = Array_Sum(kf);
 	 double p0 = (double)m/n;	 
 	 double pc = 0;
@@ -101,6 +108,22 @@ public class MathFuction {
 		 if(p>a.get(i).pvalue){
 			 index=i;
 			 p=a.get(i).pvalue;
+		 }
+	 
+	 t = a.get(index);	 
+	 return t;
+ }
+ public Term Min_Q(ArrayList<Term> a){
+	 Term t = new Term();
+	 if(a.size()==0)
+		 return t;
+	 
+	 double p = a.get(0).qvalue;
+	 int index = 0;
+	 for(int i=1;i<a.size();i++)
+		 if(p>a.get(i).qvalue){
+			 index=i;
+			 p=a.get(i).qvalue;
 		 }
 	 
 	 t = a.get(index);	 

@@ -12,6 +12,9 @@ public class Term {
 	public String Function=null;
 	public ArrayList<String> Node = new ArrayList<String>();
 	public double pvalue=0;
+	public double qvalue=0;
+	public int level_min=0;
+	public int level_max=0;
 	
 	public boolean InTerm(String key){
 		if(Node.contains(key))
