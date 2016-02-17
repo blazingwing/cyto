@@ -116,6 +116,7 @@ public class MenuAction extends AbstractCyAction {
         ArrayList<Term> GroupTermList = new ArrayList<Term>();
         ArrayList<Term> GGList = new ArrayList<Term>();
         ArrayList<Double> AnnotationSite = new ArrayList<Double>();
+        int NanAnnotationSite = 0;
         
         ArrayList<String> ClassList = new ArrayList<String>();
         ArrayList<String> Node_class = new ArrayList<String>();
@@ -149,11 +150,12 @@ public class MenuAction extends AbstractCyAction {
         double count2 = 0; 
         double count2_withoutNan = 0;
         double count3 = 0;
-        double r = 18;
+        double r = 19;
         double m = 0;
         double temp = 0;
         int layer = 0;
         int ref_count=0;
+        int distance = 140;
         
         //ALL Node
         for(CyNode node : network.getNodeList()){
@@ -214,8 +216,10 @@ public class MenuAction extends AbstractCyAction {
         		if(TermList_o.get(i).Node.contains(Node_name.get(j)))
         			a++;
     		if(a>0){
-    			TermList.add(TermList_o.get(i));
-    			TermList_index.add(i);
+    			if(mf.LevelCheck(6, 13, TermList_o.get(i).level_min,TermList_o.get(i).level_max)){
+    				TermList.add(TermList_o.get(i));
+    				TermList_index.add(i);
+    			}
     		}
     	}        
         
@@ -453,7 +457,7 @@ public class MenuAction extends AbstractCyAction {
         if(SiteList.size()!=0)
         	if(NanSiteList_count>0)
         		NanSiteList.set(0, SiteList.get(SiteList.size()-1)+SiteList_count.get(SiteList_count.size()-1));
-    	
+    	NanAnnotationSite = NanSiteList.get(0);
         
 
         
@@ -494,8 +498,8 @@ public class MenuAction extends AbstractCyAction {
         	nodeView = networkView.getNodeView(node);
         	
         	m = (temp*360/count2)*Math.PI/180;
-        	nodeView.setVisualProperty(BasicVisualLexicon.NODE_X_LOCATION, (140+r*(count1-1)+r*(layer-(temp%layer))*layer)*Math.cos(m)+xa);
-        	nodeView.setVisualProperty(BasicVisualLexicon.NODE_Y_LOCATION, (140+r*(count1-1)+r*(layer-(temp%layer))*layer)*Math.sin(m)+xb);
+        	nodeView.setVisualProperty(BasicVisualLexicon.NODE_X_LOCATION, (distance+r*(count1-1)+r*(layer-(temp%layer))*layer)*Math.cos(m)+xa);
+        	nodeView.setVisualProperty(BasicVisualLexicon.NODE_Y_LOCATION, (distance+r*(count1-1)+r*(layer-(temp%layer))*layer)*Math.sin(m)+xb);
         	
         	/* Site add */
         	Node_x.add(nodeView.getVisualProperty(BasicVisualLexicon.NODE_X_LOCATION));
@@ -591,7 +595,8 @@ public class MenuAction extends AbstractCyAction {
         	
         	double num = AnnotationSite.get(i);
         	m = (num*360/count2)*Math.PI/180;
-        	
+
+        	int dis=((m>=2.355&&m<=3.925)||(m>=5.495)||(m<=0.785))?distance*3:distance*2;
         	double c=0;
         	float c2 = (float) 0.85;
         	float c3 = (float) 0.9;
@@ -601,10 +606,10 @@ public class MenuAction extends AbstractCyAction {
     			c=i;
         	nodeView = networkView.getNodeView(centroid);
 
-        	nodeView.setVisualProperty(BasicVisualLexicon.NODE_X_LOCATION, (170+r*(count1-1)+r*layer*layer)*Math.cos(m)+xa);
-        	nodeView.setVisualProperty(BasicVisualLexicon.NODE_Y_LOCATION, (170+r*(count1-1)+r*layer*layer)*Math.sin(m)+xb);
+        	nodeView.setVisualProperty(BasicVisualLexicon.NODE_X_LOCATION, (dis+r*(count1-1)+r*layer*layer)*Math.cos(m)+xa);
+        	nodeView.setVisualProperty(BasicVisualLexicon.NODE_Y_LOCATION, (dis+r*(count1-1)+r*layer*layer)*Math.sin(m)+xb);
         	
-        	nodeView.setLockedValue(BasicVisualLexicon.NODE_LABEL, GGList.get(i).Name);
+        	nodeView.setLockedValue(BasicVisualLexicon.NODE_LABEL, GGList.get(i).Function);
         	
         	nodeView.setLockedValue(BasicVisualLexicon.NODE_LABEL_FONT_SIZE, 24);
         	nodeView.setLockedValue(BasicVisualLexicon.NODE_TRANSPARENCY, 0);
@@ -612,6 +617,34 @@ public class MenuAction extends AbstractCyAction {
         	nodeView.setLockedValue(BasicVisualLexicon.NODE_LABEL_COLOR, Color.getHSBColor((float) ((float)c/ClassList.size()), c2, c3));
             
             networkView.updateView();
+        	
+        }
+        for(int i=0;i<(NanSiteList_count>0?1:0);i++){
+        	CyNode centroid = network.addNode();
+        	
+        	network.getRow(centroid).set(CyNetwork.NAME, GGList.get(i).Function);
+        	
+        	networkView.updateView();
+        	double num=((double)NanSiteList_count/2+NanAnnotationSite);
+        	m = (num*360/count2)*Math.PI/180;
+
+        	int dis=((m>=2.355&&m<=3.925)||(m>=5.495)||(m<=0.785))?distance*3:distance*2;
+        	double c=0;
+        	float c2 = (float) 0.05;
+        	float c3 = (float) 0.5;
+        	
+        	nodeView = networkView.getNodeView(centroid);
+
+        	nodeView.setVisualProperty(BasicVisualLexicon.NODE_X_LOCATION, (dis+r*(count1-1)+r*layer*layer)*Math.cos(m)+xa);
+        	nodeView.setVisualProperty(BasicVisualLexicon.NODE_Y_LOCATION, (dis+r*(count1-1)+r*layer*layer)*Math.sin(m)+xb);
+        	
+        	nodeView.setLockedValue(BasicVisualLexicon.NODE_LABEL, "other functions");
+        	
+        	nodeView.setLockedValue(BasicVisualLexicon.NODE_LABEL_FONT_SIZE, 24);
+        	nodeView.setLockedValue(BasicVisualLexicon.NODE_TRANSPARENCY, 0);
+        	nodeView.setLockedValue(BasicVisualLexicon.NODE_BORDER_TRANSPARENCY, 0);
+        	nodeView.setLockedValue(BasicVisualLexicon.NODE_LABEL_COLOR, Color.getHSBColor((float) 0, c2, c3));
+        	
         	
         }
         

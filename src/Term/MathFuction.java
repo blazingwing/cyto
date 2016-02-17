@@ -161,6 +161,12 @@ public class MathFuction {
 	 p=p*ptable.length/r;
 	 return p;
  }
+ public boolean LevelCheck(int min, int max, int k1, int k2){
+	 if(k2>=min)
+		 if(k1<=max)
+			 return true;
+	 return false;
+ }
  
 
 }

@@ -3,10 +3,15 @@ package ControlPanel;
 import java.awt.Component;
 
 import javax.swing.Icon;
+import javax.swing.JButton;
+import javax.swing.JComboBox;
 import javax.swing.JPanel;
 import org.cytoscape.application.swing.CytoPanelComponent;
 import org.cytoscape.application.swing.CytoPanelName;
+import org.cytoscape.work.Task;
+
 import javax.swing.JLabel;
+import javax.swing.JOptionPane;
 
 public class MyControlPanel extends JPanel implements CytoPanelComponent {
 	
@@ -15,10 +20,11 @@ public class MyControlPanel extends JPanel implements CytoPanelComponent {
 
 	public MyControlPanel() {
 		
-		JLabel JLtitle = new JLabel("getTitle");
-		this.add(JLtitle);
+		JLabel j1 = new JLabel("LLLLLLLLLL");
+		JButton j2 = new JButton("BBBBBBBBBB");
+		this.add(j1);
 		this.setVisible(true);
-		
+		this.add(j2);        
 	}
 
 
@@ -40,4 +46,5 @@ public class MyControlPanel extends JPanel implements CytoPanelComponent {
 	public Icon getIcon() {
 		return null;
 	}
+
 }
