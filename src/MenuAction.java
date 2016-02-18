@@ -596,7 +596,7 @@ public class MenuAction extends AbstractCyAction {
         	double num = AnnotationSite.get(i);
         	m = (num*360/count2)*Math.PI/180;
 
-        	int dis=((m>=2.355&&m<=3.925)||(m>=5.495)||(m<=0.785))?distance*3:distance*2;
+        	int dis=(int) ((Math.abs(Math.cos(num*360/count2*Math.PI/180))+1.5)*distance);
         	double c=0;
         	float c2 = (float) 0.85;
         	float c3 = (float) 0.9;
@@ -628,7 +628,7 @@ public class MenuAction extends AbstractCyAction {
         	double num=((double)NanSiteList_count/2+NanAnnotationSite);
         	m = (num*360/count2)*Math.PI/180;
 
-        	int dis=((m>=2.355&&m<=3.925)||(m>=5.495)||(m<=0.785))?distance*3:distance*2;
+        	int dis=(int) ((Math.abs(Math.cos(num*360/count2*Math.PI/180))+1.5)*distance);
         	double c=0;
         	float c2 = (float) 0.05;
         	float c3 = (float) 0.5;
