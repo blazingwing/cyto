@@ -158,15 +158,19 @@ public class MathFuction {
 		 }
 	 if(r==-1)
 		 return p;
-	 p=p*ptable.length/r;
+	 p=p*ptable.length/(r+1);
 	 return p;
  }
  public boolean LevelCheck(int min, int max, int k1, int k2){
+	 if(min>max){
+		 int temp=min;
+		 min=max;
+		 max=temp;
+	 }
 	 if(k2>=min)
 		 if(k1<=max)
 			 return true;
 	 return false;
  }
- 
 
 }

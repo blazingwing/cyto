@@ -1,106 +1,186 @@
-import BundleEdge.*;
-import Term.*;
 
-import static org.cytoscape.work.ServiceProperties.ENABLE_FOR;
-import static org.cytoscape.work.ServiceProperties.MENU_GRAVITY;
-import static org.cytoscape.work.ServiceProperties.PREFERRED_MENU;
-import static org.cytoscape.work.ServiceProperties.TITLE;
+import Term.*;
 
 import java.awt.Color;
 import java.awt.Component;
-import java.awt.List;
-import java.awt.Shape;
-import java.lang.Math;
-import java.lang.reflect.Array;
-import java.net.MalformedURLException;
-import java.net.URL;
+import java.awt.Dimension;
 import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Enumeration;
-import java.util.HashMap;
 import java.util.Properties;
-import java.util.jar.JarFile;
-import java.util.zip.ZipEntry;
-import java.util.HashSet;
-import java.util.Map;
-import java.util.Set;
 
-import javax.crypto.spec.IvParameterSpec;
-import javax.naming.directory.BasicAttribute;
-import javax.naming.directory.InvalidSearchFilterException;
-import javax.swing.plaf.TabbedPaneUI;
-import javax.swing.plaf.basic.BasicTabbedPaneUI.TabbedPaneLayout;
-import javax.swing.text.AttributeSet.ColorAttribute;
-import javax.xml.soap.Node;
-import javax.xml.stream.events.StartDocument;
-
-import java.awt.event.ActionEvent;
-import java.awt.geom.Point2D;
-import java.awt.image.SinglePixelPackedSampleModel;
-import java.io.BufferedReader;
-import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.FileReader;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
+import javax.swing.Icon;
+import javax.swing.JButton;
+import javax.swing.JComboBox;
+import javax.swing.JPanel;
+import javax.swing.JTextArea;
+import javax.swing.JTextField;
+import javax.swing.JTextPane;
+import javax.swing.event.AncestorEvent;
+import javax.swing.event.AncestorListener;
 
 import org.cytoscape.app.CyAppAdapter;
+import org.cytoscape.app.swing.CySwingAppAdapter;
 import org.cytoscape.application.CyApplicationManager;
-import org.cytoscape.application.swing.AbstractCyAction;
+import org.cytoscape.application.CyVersion;
+import org.cytoscape.application.swing.CytoPanelComponent;
+import org.cytoscape.application.swing.CytoPanelName;
+import org.cytoscape.event.CyEventHelper;
+import org.cytoscape.group.CyGroupFactory;
+import org.cytoscape.group.CyGroupManager;
+import org.cytoscape.group.data.CyGroupAggregationManager;
+import org.cytoscape.io.datasource.DataSourceManager;
+import org.cytoscape.io.read.CyNetworkReaderManager;
+import org.cytoscape.io.read.CyPropertyReaderManager;
+import org.cytoscape.io.read.CySessionReaderManager;
+import org.cytoscape.io.read.CyTableReaderManager;
+import org.cytoscape.io.write.CyNetworkViewWriterManager;
+import org.cytoscape.io.write.CyPropertyWriterManager;
+import org.cytoscape.io.write.CySessionWriterManager;
+import org.cytoscape.io.write.CyTableWriterManager;
+import org.cytoscape.io.write.PresentationWriterManager;
 import org.cytoscape.model.CyEdge;
 import org.cytoscape.model.CyNetwork;
+import org.cytoscape.model.CyNetworkFactory;
+import org.cytoscape.model.CyNetworkManager;
 import org.cytoscape.model.CyNode;
+import org.cytoscape.model.CyTableFactory;
+import org.cytoscape.model.CyTableManager;
 import org.cytoscape.model.CyTableUtil;
-import org.cytoscape.view.layout.CyLayoutAlgorithm;
+import org.cytoscape.model.subnetwork.CyRootNetworkManager;
+import org.cytoscape.property.CyProperty;
+import org.cytoscape.service.util.CyServiceRegistrar;
+import org.cytoscape.session.CySessionManager;
+import org.cytoscape.task.create.CloneNetworkTaskFactory;
+import org.cytoscape.task.create.CreateNetworkViewTaskFactory;
+import org.cytoscape.task.create.NewEmptyNetworkViewFactory;
+import org.cytoscape.task.create.NewNetworkSelectedNodesAndEdgesTaskFatory;
+import org.cytoscape.task.create.NewNetworkSelectedNodesOnlyTaskFactory;
+import org.cytoscape.task.create.NewSessionTaskFactory;
+import org.cytoscape.task.destroy.DeleteColumnTaskFactory;
+import org.cytoscape.task.destroy.DeleteSelectedNodesAndEdgesTaskFactory;
+import org.cytoscape.task.destroy.DeleteTableTaskFactory;
+import org.cytoscape.task.destroy.DestroyNetworkTaskFactory;
+import org.cytoscape.task.destroy.DestroyNetworkViewTaskFactory;
+import org.cytoscape.task.edit.CollapseGroupTaskFactory;
+import org.cytoscape.task.edit.ConnectSelectedNodesTaskFactory;
+import org.cytoscape.task.edit.EditNetworkTitleTaskFactory;
+import org.cytoscape.task.edit.ExpandGroupTaskFactory;
+import org.cytoscape.task.edit.GroupNodesTaskFactory;
+import org.cytoscape.task.edit.MapGlobalToLocalTableTaskFactory;
+import org.cytoscape.task.edit.MapTableToNetworkTablesTaskFactory;
+import org.cytoscape.task.edit.RenameColumnTaskFactory;
+import org.cytoscape.task.edit.UnGroupNodesTaskFactory;
+import org.cytoscape.task.edit.UnGroupTaskFactory;
+import org.cytoscape.task.hide.HideSelectedEdgesTaskFactory;
+import org.cytoscape.task.hide.HideSelectedNodesTaskFactory;
+import org.cytoscape.task.hide.HideSelectedTaskFactory;
+import org.cytoscape.task.hide.UnHideAllEdgesTaskFactory;
+import org.cytoscape.task.hide.UnHideAllNodesTaskFactory;
+import org.cytoscape.task.hide.UnHideAllTaskFactory;
+import org.cytoscape.task.read.LoadNetworkFileTaskFactory;
+import org.cytoscape.task.read.LoadNetworkURLTaskFactory;
+import org.cytoscape.task.read.LoadTableFileTaskFactory;
+import org.cytoscape.task.read.LoadTableURLTaskFactory;
+import org.cytoscape.task.read.LoadVizmapFileTaskFactory;
+import org.cytoscape.task.read.OpenSessionTaskFactory;
+import org.cytoscape.task.select.DeselectAllEdgesTaskFactory;
+import org.cytoscape.task.select.DeselectAllNodesTaskFactory;
+import org.cytoscape.task.select.DeselectAllTaskFactory;
+import org.cytoscape.task.select.InvertSelectedEdgesTaskFactory;
+import org.cytoscape.task.select.InvertSelectedNodesTaskFactory;
+import org.cytoscape.task.select.SelectAdjacentEdgesTaskFactory;
+import org.cytoscape.task.select.SelectAllEdgesTaskFactory;
+import org.cytoscape.task.select.SelectAllNodesTaskFactory;
+import org.cytoscape.task.select.SelectAllTaskFactory;
+import org.cytoscape.task.select.SelectConnectedNodesTaskFactory;
+import org.cytoscape.task.select.SelectFirstNeighborsNodeViewTaskFactory;
+import org.cytoscape.task.select.SelectFirstNeighborsTaskFactory;
+import org.cytoscape.task.select.SelectFromFileListTaskFactory;
+import org.cytoscape.task.visualize.ApplyPreferredLayoutTaskFactory;
+import org.cytoscape.task.visualize.ApplyVisualStyleTaskFactory;
+import org.cytoscape.task.write.ExportNetworkImageTaskFactory;
+import org.cytoscape.task.write.ExportNetworkViewTaskFactory;
+import org.cytoscape.task.write.ExportSelectedTableTaskFactory;
+import org.cytoscape.task.write.ExportTableTaskFactory;
+import org.cytoscape.task.write.ExportVizmapTaskFactory;
+import org.cytoscape.task.write.SaveSessionAsTaskFactory;
 import org.cytoscape.view.layout.CyLayoutAlgorithmManager;
 import org.cytoscape.view.model.CyNetworkView;
+import org.cytoscape.view.model.CyNetworkViewFactory;
+import org.cytoscape.view.model.CyNetworkViewManager;
 import org.cytoscape.view.model.View;
+import org.cytoscape.view.presentation.RenderingEngineManager;
 import org.cytoscape.view.presentation.property.BasicVisualLexicon;
-import org.cytoscape.view.presentation.property.EdgeBendVisualProperty;
 import org.cytoscape.view.presentation.property.LineTypeVisualProperty;
 import org.cytoscape.view.presentation.property.NodeShapeVisualProperty;
 import org.cytoscape.view.presentation.property.values.Bend;
-import org.cytoscape.view.presentation.property.values.BendFactory;
-import org.cytoscape.view.presentation.property.values.Handle;
-import org.cytoscape.view.presentation.property.values.HandleFactory;
 import org.cytoscape.view.vizmap.VisualMappingFunctionFactory;
 import org.cytoscape.view.vizmap.VisualMappingManager;
-import org.cytoscape.view.vizmap.mappings.DiscreteMapping;
-import org.cytoscape.work.SynchronousTaskManager;
-import org.cytoscape.work.TaskIterator;
+import org.cytoscape.view.vizmap.VisualStyleFactory;
+import org.cytoscape.work.Task;
+import org.cytoscape.work.TaskManager;
+import org.cytoscape.work.undo.UndoSupport;
 import org.omg.CORBA.PUBLIC_MEMBER;
-import org.cytoscape.application.swing.CySwingApplication;
-import org.cytoscape.model.CyNetworkManager;
-import org.cytoscape.application.swing.CytoPanelComponent;
-import org.cytoscape.application.swing.CytoPanelState;
-import org.cytoscape.application.swing.CyAction;
-import org.cytoscape.service.util.AbstractCyActivator;
-import org.cytoscape.task.EdgeViewTaskFactory;
-import org.cytoscape.task.NetworkTaskFactory;
-import org.osgi.framework.BundleContext;
-import org.osgi.framework.BundleException;
-import org.osgi.framework.FrameworkListener;
-import org.osgi.service.condpermadmin.BundleLocationCondition;
 
-import static org.cytoscape.work.ServiceProperties.*;
+import javax.swing.JLabel;
+import javax.swing.JOptionPane;
 
-public class MenuAction extends AbstractCyAction {
-    private final CyAppAdapter adapter;
+public class MyControlPanel extends JPanel implements CytoPanelComponent {
+	
+	private static final long serialVersionUID = 8292806967891823933L;
 
-    public MenuAction(CyAppAdapter adapter) {
-        super("々々々々々々々々々々",
-                adapter.getCyApplicationManager(),
-                "network",
-                adapter.getCyNetworkViewManager());
-            this.adapter = adapter;
-            setPreferredMenu("Apps");           
-       	 //MyControlPanel myPanel = new MyControlPanel();
-       	 //adapter.getCyServiceRegistrar().registerService(myPanel,CytoPanelComponent.class,new Properties());  
-    }
-     @SuppressWarnings({ "unused", "null" })
-	public void actionPerformed(ActionEvent e) {
 
+	public MyControlPanel(final CySwingAppAdapter adapter) {
+		
+		this.setVisible(true);
+		this.setBorder(javax.swing.BorderFactory.createTitledBorder("Basic operations"));
+		
+		jp1.setBorder(javax.swing.BorderFactory.createTitledBorder("GO Tree Interval"));
+		jp2.setBorder(javax.swing.BorderFactory.createTitledBorder("q-value cut"));
+		jp3.setBorder(javax.swing.BorderFactory.createTitledBorder("Kappa score"));
+		jp4.setBorder(javax.swing.BorderFactory.createTitledBorder("Magic"));
+		jp = new JPanel[]{jp1,jp2,jp3,jp4};
+		
+		jp1.add(jl1);		
+		
+		jcb1.setModel(new javax.swing.DefaultComboBoxModel(new String[]{"1", "2", "3", "4", "5", "6", "7", "8", "9", "10", "11", "12", "13", "14", "15", "16", "17", "18", "19","20"}));
+		jcb1.setEnabled(true);
+		jcb1.setSelectedIndex(5);
+		jp1.add(jcb1);
+		
+		jp1.add(jl2);
+		
+		jcb2.setModel(new javax.swing.DefaultComboBoxModel(new String[]{"1", "2", "3", "4", "5", "6", "7", "8", "9", "10", "11", "12", "13", "14", "15", "16", "17", "18", "19","20"}));
+		jcb2.setEnabled(true);
+		jcb2.setSelectedIndex(12);
+		jp1.add(jcb2);
+		
+		jp2.add(jl3);		
+		
+		jtf1.setPreferredSize(new Dimension(125,25));
+		jp2.add(jtf1);	
+		
+		jp3.add(jl4);		
+		jtf2.setPreferredSize(new Dimension(125,25));;
+		jp3.add(jtf2);
+		
+		
+		jb1.addActionListener(new java.awt.event.ActionListener(){
+			public void actionPerformed(java.awt.event.ActionEvent evt){
+				Magic(evt,adapter);
+				}
+			});
+		jp4.add(jb1);
+		
+		this.add(jp1);
+		this.add(jp2);
+		this.add(jp3);
+		this.add(jp4);
+
+		//mf.kappascore_t = Double.parseDouble(jtf2.getText());
+	}
+
+	public void Magic(java.awt.event.ActionEvent evt,CySwingAppAdapter adapter){
+		
     	//new CyActivator();
         final CyApplicationManager manager = adapter.getCyApplicationManager();
         final CyNetworkView networkView = manager.getCurrentNetworkView();
@@ -109,7 +189,7 @@ public class MenuAction extends AbstractCyAction {
         String line = null;
         ArrayList<Term> TermList = new ArrayList<Term>();
         ArrayList<Term> TermList_o = new ArrayList<Term>();
-        ArrayList<Integer> TermList_index = new ArrayList<Integer>();
+        ArrayList<Term> TermList_oo = new ArrayList<Term>();
         ArrayList<Term> CmpTermList = new ArrayList<Term>();
         ArrayList<Term> CmpTermList2 = new ArrayList<Term>();
         ArrayList<Term> GroupGeneList = new ArrayList<Term>();
@@ -139,7 +219,7 @@ public class MenuAction extends AbstractCyAction {
 
         //-----Term-----
         FileFactory ff = new FileFactory();
-        TermList_o=ff.ReadTermTxt("homo_term.txt");
+        TermList_oo=ff.ReadTermTxt("homo_term.txt");
         CmpTermList=ff.ReadCmpTxt("homo_cmp.txt");
         CmpTermList2=ff.ReadCmpTxt("homo_cmp2.txt");
     	//double[][] Kappa=ff.ReadKappaTxt("homo_kappa.txt", TermList_o.size());   
@@ -209,49 +289,54 @@ public class MenuAction extends AbstractCyAction {
         }
         
         count3 = count1 + count2;
-        
-        for(int i=0;i<TermList_o.size();i++){
-    		int a=0;
-    		for(int j=0;j<Node_name.size();j++)
-        		if(TermList_o.get(i).Node.contains(Node_name.get(j)))
-        			a++;
-    		if(a>0){
-    			if(mf.LevelCheck(6, 13, TermList_o.get(i).level_min,TermList_o.get(i).level_max)){
-    				TermList.add(TermList_o.get(i));
-    				TermList_index.add(i);
-    			}
-    		}
-    	}        
-        
-        for(int i=0;i<TermList.size();i++)
-                ref_count+=TermList.get(i).Node.size();
-        
         double xa = x/count3;
         double xb = y/count3;
         
+        for(int i=0;i<TermList_oo.size();i++){
+    		int a=0;
+    		for(int j=0;j<Node_name.size();j++)
+        		if(TermList_oo.get(i).Node.contains(Node_name.get(j)))
+        			a++;
+    		if(a>0){
+    			if(mf.LevelCheck(jcb1.getSelectedIndex()+1, jcb2.getSelectedIndex()+1, TermList_oo.get(i).level_min,TermList_oo.get(i).level_max)){
+    					TermList_o.add(TermList_oo.get(i));
+    			}
+    		}
+    	}
+        
+        
 
         //-----Term FisherExcat p-value---
-        double[] TermpvalueTable = new double[TermList.size()];
-        for(int i=0;i<TermList.size();i++)
+        
+        for(int i=0;i<TermList_o.size();i++)
         {
         	int a=0,b=0,c=0,d=0;
         	for(int j=0;j<Node_name.size();j++)
-        		if(TermList.get(i).Node.contains(Node_name.get(j)))
+        		if(TermList_o.get(i).Node.contains(Node_name.get(j)))
         			a++;
         	b=(int)count2-a;
-        	for(int j=0;j<TermList.get(i).Node.size();j++)
-        		for(int k=0;k<TermList.size();k++)
+        	for(int j=0;j<TermList_o.get(i).Node.size();j++)
+        		for(int k=0;k<TermList_o.size();k++)
         		{
         			if(i==k)
         				continue;
-        			if(TermList.get(k).Node.contains(TermList.get(i).Node.get(j))){
+        			if(TermList_o.get(k).Node.contains(TermList_o.get(i).Node.get(j))){
         				c++;
         				break;
         			}
         		}
         	d=ref_count-c;
-        	TermList.get(i).pvalue=mf.FisherExact_LoggetP(a, b, c, d);
+        	TermList_o.get(i).pvalue=mf.FisherExact_LoggetP(a, b, c, d);
+        	if(TermList_o.get(i).pvalue <= Double.parseDouble(jtf1.getText()))
+        		TermList.add(TermList_o.get(i));
         }
+        
+        //**********//
+        
+        for(int i=0;i<TermList.size();i++)
+            ref_count+=TermList.get(i).Node.size();
+        
+        double[] TermpvalueTable = new double[TermList.size()];
         TermpvalueTable=mf.SortTable(TermpvalueTable);
         for(int i=0;i<TermList.size();i++)
         	TermList.get(i).qvalue=mf.FDR(TermList.get(i).pvalue, TermpvalueTable);
@@ -286,7 +371,7 @@ public class MenuAction extends AbstractCyAction {
         	int gi=TermToGroupIndex[i];
         	for(int j=i+1;j<TermList.size();j++)
         	{
-        		if(GroupKappaTable[i][j]>0.4){
+        		if(GroupKappaTable[i][j]>=Double.parseDouble(jtf2.getText())){
         			if(TermToGroupIndex[j]==-1){
         				TermToGroupIndex[j]=gi;
         			}
@@ -651,7 +736,44 @@ public class MenuAction extends AbstractCyAction {
         
 
         networkView.updateView();
+	}
+
+	public Component getComponent() {
+		return this;
+	}
 
 
-    }
+	public CytoPanelName getCytoPanelName() {
+		return CytoPanelName.WEST;
+	}
+
+
+	public String getTitle() {
+		return "Visualization";
+	}
+
+
+	public Icon getIcon() {
+		return null;
+	}
+	//*****
+
+	//*****
+	public JPanel jp1=new JPanel();
+	public JPanel jp2=new JPanel();
+	public JPanel jp3=new JPanel();
+	public JPanel jp4=new JPanel();
+
+	public JPanel[] jp = new JPanel[]{jp1,jp2,jp3,jp4};
+	public JLabel jl1 = new JLabel("GO Tree Interval : ");
+	public JComboBox jcb1 = new JComboBox();
+	public JLabel jl2 = new JLabel(" ~ ");
+	public JComboBox jcb2 = new JComboBox();
+	public JLabel jl3 = new JLabel("q-value cut :");
+	public JTextArea jtf1 = new JTextArea("0.05");
+	public JLabel jl4 = new JLabel("Kappa score :");
+	public JTextArea jtf2 = new JTextArea("0.4");
+	public JButton jb1 = new JButton("Magic !!!");
+	public MathFuction mf=new MathFuction();
+
 }
