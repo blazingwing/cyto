@@ -493,6 +493,8 @@ public class MenuAction extends AbstractCyAction {
         /* Site Circle Unselected */
         layer = (int)Math.sqrt((double)count2);
         layer /= 2;
+        if(layer<1)
+        	layer=1;
         temp = 0;
         
         for (CyNode node : CyTableUtil.getNodesInState(network, "selected", false)){
@@ -501,7 +503,7 @@ public class MenuAction extends AbstractCyAction {
         	m = (temp*360/count2)*Math.PI/180;
         	nodeView.setVisualProperty(BasicVisualLexicon.NODE_X_LOCATION, (distance+r*(count1-1)+r*(layer-(temp%layer))*layer)*Math.cos(m)+xa);
         	nodeView.setVisualProperty(BasicVisualLexicon.NODE_Y_LOCATION, (distance+r*(count1-1)+r*(layer-(temp%layer))*layer)*Math.sin(m)+xb);
-        	
+
         	//Site add 
         	Node_x.add(nodeView.getVisualProperty(BasicVisualLexicon.NODE_X_LOCATION));
         	Node_y.add(nodeView.getVisualProperty(BasicVisualLexicon.NODE_Y_LOCATION));
@@ -542,17 +544,20 @@ public class MenuAction extends AbstractCyAction {
         				edgeView.setLockedValue(BasicVisualLexicon.EDGE_LINE_TYPE, LineTypeVisualProperty.SOLID);
         			}
 
+        	nodeView.setLockedValue(BasicVisualLexicon.NODE_TRANSPARENCY, 180);
         	nodeView.setLockedValue(BasicVisualLexicon.NODE_SHAPE, NodeShapeVisualProperty.ELLIPSE);
         	nodeView.setLockedValue(BasicVisualLexicon.NODE_SIZE, 60.0);
         	
         	temp+=1;
         } 
         
-        
+
         for(int i=0;i<SiteList.size();i++){
         	AnnotationSite.add(((double)SiteList_count.get(i)/2+SiteList.get(i)));
         }
+
         //Change Site 
+
         temp = 0;
         for (CyNode node : CyTableUtil.getNodesInState(network, "selected", false)){
         	nodeView = networkView.getNodeView(node);
@@ -583,10 +588,10 @@ public class MenuAction extends AbstractCyAction {
         	temp += 1;        	
 
         }
-        
+
         /* Add Annotation */
         temp = 0;
-        
+
         for(int i=0;i<GGList.size();i++){
         	CyNode centroid = network.addNode();
         	
@@ -647,7 +652,6 @@ public class MenuAction extends AbstractCyAction {
         	
         	
         }
-        
         
 
         networkView.updateView();

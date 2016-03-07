@@ -43,8 +43,9 @@ public class NetworkLayout extends AbstractCySwingApp
 		
       	MyControlPanel myControlPanel = new MyControlPanel(adapter);
       	adapter.getCyServiceRegistrar().registerService(myControlPanel,CytoPanelComponent.class,new Properties());      	 
-      	myControlPanel.setPreferredSize(new Dimension(300, 500));
+      	myControlPanel.setPreferredSize(new Dimension(315, 500));
       	myControlPanel.setFocusable(true);
+      	myControlPanel.setMaximumSize(new Dimension(315,500));
  		//ControlPanelAction controlPanelAction = new ControlPanelAction(cytoscapeDesktopService,myControlPanel);
  		//swingAdapter.getCySwingApplication().addAction(controlPanelAction);
 	}

@@ -4,9 +4,14 @@ import Term.*;
 import java.awt.Color;
 import java.awt.Component;
 import java.awt.Dimension;
+import java.awt.Font;
 import java.util.ArrayList;
 import java.util.Properties;
+import java.util.Set;
 
+import javax.naming.ldap.ManageReferralControl;
+import javax.swing.ActionMap;
+import javax.swing.BorderFactory;
 import javax.swing.Icon;
 import javax.swing.JButton;
 import javax.swing.JComboBox;
@@ -14,6 +19,7 @@ import javax.swing.JPanel;
 import javax.swing.JTextArea;
 import javax.swing.JTextField;
 import javax.swing.JTextPane;
+import javax.swing.border.Border;
 import javax.swing.event.AncestorEvent;
 import javax.swing.event.AncestorListener;
 
@@ -49,6 +55,7 @@ import org.cytoscape.model.subnetwork.CyRootNetworkManager;
 import org.cytoscape.property.CyProperty;
 import org.cytoscape.service.util.CyServiceRegistrar;
 import org.cytoscape.session.CySessionManager;
+import org.cytoscape.task.NetworkTaskFactory;
 import org.cytoscape.task.create.CloneNetworkTaskFactory;
 import org.cytoscape.task.create.CreateNetworkViewTaskFactory;
 import org.cytoscape.task.create.NewEmptyNetworkViewFactory;
@@ -105,8 +112,6 @@ import org.cytoscape.task.write.ExportVizmapTaskFactory;
 import org.cytoscape.task.write.SaveSessionAsTaskFactory;
 import org.cytoscape.view.layout.CyLayoutAlgorithmManager;
 import org.cytoscape.view.model.CyNetworkView;
-import org.cytoscape.view.model.CyNetworkViewFactory;
-import org.cytoscape.view.model.CyNetworkViewManager;
 import org.cytoscape.view.model.View;
 import org.cytoscape.view.presentation.RenderingEngineManager;
 import org.cytoscape.view.presentation.property.BasicVisualLexicon;
@@ -117,6 +122,7 @@ import org.cytoscape.view.vizmap.VisualMappingFunctionFactory;
 import org.cytoscape.view.vizmap.VisualMappingManager;
 import org.cytoscape.view.vizmap.VisualStyleFactory;
 import org.cytoscape.work.Task;
+import org.cytoscape.work.TaskIterator;
 import org.cytoscape.work.TaskManager;
 import org.cytoscape.work.undo.UndoSupport;
 import org.omg.CORBA.PUBLIC_MEMBER;
@@ -132,21 +138,24 @@ public class MyControlPanel extends JPanel implements CytoPanelComponent {
 	public MyControlPanel(final CySwingAppAdapter adapter) {
 		
 		this.setVisible(true);
-		this.setBorder(javax.swing.BorderFactory.createTitledBorder("Basic operations"));
-		
-		jp1.setBorder(javax.swing.BorderFactory.createTitledBorder("GO Tree Interval"));
-		jp2.setBorder(javax.swing.BorderFactory.createTitledBorder("q-value cut"));
-		jp3.setBorder(javax.swing.BorderFactory.createTitledBorder("Kappa score"));
-		jp4.setBorder(javax.swing.BorderFactory.createTitledBorder("Magic"));
-		jp = new JPanel[]{jp1,jp2,jp3,jp4};
-		
-		jp1.add(jl1);		
-		
+		this.setBorder(javax.swing.BorderFactory.createTitledBorder("Basic Operations"));
+		this.setPreferredSize(new Dimension(310,500));
+		jp1.setBorder(javax.swing.BorderFactory.createTitledBorder("Selection Option"));
+		jp1.setPreferredSize(new Dimension(300,50));
+		jp2.setBorder(javax.swing.BorderFactory.createTitledBorder("Statistical Option"));
+		jp2.setPreferredSize(new Dimension(300,55));
+		jp3.setBorder(javax.swing.BorderFactory.createTitledBorder("Grouping Option"));
+		jp3.setPreferredSize(new Dimension(300,150));
+		jp4.setBorder(javax.swing.BorderFactory.createTitledBorder("Submit"));
+		jp4.setPreferredSize(new Dimension(300,100));
+		jl1.setFont(new Font(jl1.getText(), 1, 13));
+		jp1.add(jl1);
 		jcb1.setModel(new javax.swing.DefaultComboBoxModel(new String[]{"1", "2", "3", "4", "5", "6", "7", "8", "9", "10", "11", "12", "13", "14", "15", "16", "17", "18", "19","20"}));
 		jcb1.setEnabled(true);
 		jcb1.setSelectedIndex(5);
 		jp1.add(jcb1);
 		
+		jl2.setFont(new Font(jl2.getText(), 1, 15));
 		jp1.add(jl2);
 		
 		jcb2.setModel(new javax.swing.DefaultComboBoxModel(new String[]{"1", "2", "3", "4", "5", "6", "7", "8", "9", "10", "11", "12", "13", "14", "15", "16", "17", "18", "19","20"}));
@@ -154,22 +163,68 @@ public class MyControlPanel extends JPanel implements CytoPanelComponent {
 		jcb2.setSelectedIndex(12);
 		jp1.add(jcb2);
 		
+		jl3.setFont(new Font(jl3.getText(), 1, 15));	
+		jl3.setForeground(Color.getHSBColor((float)0.95,(float) 0.95,(float) 0.25));
 		jp2.add(jl3);		
 		
-		jtf1.setPreferredSize(new Dimension(125,25));
+		jtf1.setPreferredSize(new Dimension(100,25));
+		jtf1.setFont(new Font(jtf1.getText(), 1, 15));
 		jp2.add(jtf1);	
 		
-		jp3.add(jl4);		
-		jtf2.setPreferredSize(new Dimension(125,25));;
-		jp3.add(jtf2);
+		jl4.setFont(new Font(jl4.getText(), 1, 15));	
+		jl4.setForeground(Color.getHSBColor((float)0.95,(float) 0.95,(float) 0.25));
+		jp3_1.add(jl4);
 		
+		jtf2.setPreferredSize(new Dimension(100,25));;
+		jtf2.setFont(new Font(jtf2.getText(), 1, 15));
+		jp3_1.add(jtf2);
+		
+		jl5.setFont(new Font(jl5.getText(), 1, 15));
+		jl5.setForeground(Color.getHSBColor((float)0.95,(float) 0.95,(float) 0.25));
+		jp3_2.add(jl5);
+		
+		jtf3.setPreferredSize(new Dimension(100,25));;
+		jtf3.setFont(new Font(jtf3.getText(), 1, 15));
+		jp3_2.add(jtf3);
+		
+		jl6.setFont(new Font(jl6.getText(), 1, 15));
+		jl6.setForeground(Color.getHSBColor((float)0.95,(float) 0.95,(float) 0.25));
+		jp3_3.add(jl6);
+		
+		jtf4.setPreferredSize(new Dimension(100,25));;
+		jtf4.setFont(new Font(jtf4.getText(), 1, 15));
+		jp3_3.add(jtf4);
+		
+		jp3.add(jp3_1);		
+		jp3.add(jp3_2);
+		jp3.add(jp3_3);		
 		
 		jb1.addActionListener(new java.awt.event.ActionListener(){
-			public void actionPerformed(java.awt.event.ActionEvent evt){
-				Magic(evt,adapter);
+			public void actionPerformed(java.awt.event.ActionEvent evt){	
+
+				TaskManager taskManager= adapter.getTaskManager();
+				CloneNetworkTaskFactory cntf = adapter.get_CloneNetworkTaskFactory();
+				TaskIterator ti = cntf.createTaskIterator(adapter.getCyApplicationManager().getCurrentNetwork());				
+				taskManager.execute(ti);				
+				ti.append(ti);
+				taskManager.execute(ti);
+				//getNetworkList(adapter);
+				//adapter.getCyApplicationManager().getCurrentNetworkView().updateView();
+				
+				Magic(evt,adapter);				
 				}
 			});
+		jb1.setPreferredSize(new Dimension(220,25));
+		jb2.setPreferredSize(new Dimension(130,25));
+		jb3.setPreferredSize(new Dimension(90,25));
 		jp4.add(jb1);
+		jp4.add(jb2);
+		jb3.addActionListener(new java.awt.event.ActionListener(){
+			public void actionPerformed(java.awt.event.ActionEvent evt){
+				Defult();
+				}
+			});
+		jp4.add(jb3);
 		
 		this.add(jp1);
 		this.add(jp2);
@@ -178,10 +233,34 @@ public class MyControlPanel extends JPanel implements CytoPanelComponent {
 
 		//mf.kappascore_t = Double.parseDouble(jtf2.getText());
 	}
-
+	public JPanel jp1=new JPanel();
+	public JPanel jp2=new JPanel();
+	public JPanel jp3=new JPanel();
+	public JPanel jp4=new JPanel();
+	public JPanel jp3_1=new JPanel();
+	public JPanel jp3_2=new JPanel();
+	public JPanel jp3_3=new JPanel();
+	
+	public JLabel jl1 = new JLabel("GO Tree Interval (Level) :");
+	public JComboBox jcb1 = new JComboBox();
+	public JLabel jl2 = new JLabel(" ~ ");
+	public JComboBox jcb2 = new JComboBox();
+	public JLabel jl3 = new JLabel("         p-value cut off:");
+	public JTextArea jtf1 = new JTextArea("0.05");
+	public JLabel jl4 = new JLabel("          Kappa score :");
+	public JTextArea jtf2 = new JTextArea("0.4");
+	public JLabel jl5 = new JLabel("   Initial group size :");
+	public JTextArea jtf3 = new JTextArea("1");
+	public JLabel jl6 = new JLabel("% for group merge :");
+	public JTextArea jtf4 = new JTextArea("1");
+	public JButton jb1 = new JButton("¡i Start ¡j");
+	public JButton jb2 = new JButton("Export file");
+	public JButton jb3 = new JButton("Defult");
+	public MathFuction mf=new MathFuction();
+		
 	public void Magic(java.awt.event.ActionEvent evt,CySwingAppAdapter adapter){
 		
-    	//new CyActivator();
+    	//new CyActivator();		
         final CyApplicationManager manager = adapter.getCyApplicationManager();
         final CyNetworkView networkView = manager.getCurrentNetworkView();
         final CyNetwork network = manager.getCurrentNetwork();
@@ -578,6 +657,8 @@ public class MyControlPanel extends JPanel implements CytoPanelComponent {
         /* Site Circle Unselected */
         layer = (int)Math.sqrt((double)count2);
         layer /= 2;
+        if(layer<1)
+        	layer=1;
         temp = 0;
         
         for (CyNode node : CyTableUtil.getNodesInState(network, "selected", false)){
@@ -590,12 +671,12 @@ public class MyControlPanel extends JPanel implements CytoPanelComponent {
         	//Site add 
         	Node_x.add(nodeView.getVisualProperty(BasicVisualLexicon.NODE_X_LOCATION));
         	Node_y.add(nodeView.getVisualProperty(BasicVisualLexicon.NODE_Y_LOCATION));
-        	
+
         	double c = 0;
         	String key = Node_class.get((int)temp);        	
         	
-        	float c2 = (float) 0.85;
-        	float c3 = (float) 0.9;
+        	float c2 = (float) 0.92;
+        	float c3 = (float) 0.92;
         	if(key.equals("NaN"))
         	{
         		c2 = (float) 0.05;
@@ -627,17 +708,20 @@ public class MyControlPanel extends JPanel implements CytoPanelComponent {
         				edgeView.setLockedValue(BasicVisualLexicon.EDGE_LINE_TYPE, LineTypeVisualProperty.SOLID);
         			}
 
+        	nodeView.setLockedValue(BasicVisualLexicon.NODE_TRANSPARENCY, 180);
         	nodeView.setLockedValue(BasicVisualLexicon.NODE_SHAPE, NodeShapeVisualProperty.ELLIPSE);
         	nodeView.setLockedValue(BasicVisualLexicon.NODE_SIZE, 60.0);
         	
         	temp+=1;
         } 
         
-        
+
         for(int i=0;i<SiteList.size();i++){
         	AnnotationSite.add(((double)SiteList_count.get(i)/2+SiteList.get(i)));
         }
+        
         //Change Site 
+        
         temp = 0;
         for (CyNode node : CyTableUtil.getNodesInState(network, "selected", false)){
         	nodeView = networkView.getNodeView(node);
@@ -669,6 +753,7 @@ public class MyControlPanel extends JPanel implements CytoPanelComponent {
 
         }
         
+        
         /* Add Annotation */
         temp = 0;
         
@@ -683,8 +768,8 @@ public class MyControlPanel extends JPanel implements CytoPanelComponent {
 
         	int dis=(int) ((Math.abs(Math.cos(num*360/count2*Math.PI/180))+1.5)*distance);
         	double c=0;
-        	float c2 = (float) 0.85;
-        	float c3 = (float) 0.9;
+        	float c2 = (float) 0.92;
+        	float c3 = (float) 0.92;
     		if(i==0 && SiteList_count.get(0)>3)
     			c+=0.5;
     		else
@@ -733,11 +818,18 @@ public class MyControlPanel extends JPanel implements CytoPanelComponent {
         	
         }
         
-        
 
         networkView.updateView();
 	}
 
+	public void Defult(){
+		jcb1.setSelectedIndex(5);
+		jcb2.setSelectedIndex(12);
+		jtf1.setText("0.05");
+		jtf2.setText("0.4");
+		jtf3.setText("1");
+		jtf4.setText("1");
+	}
 	public Component getComponent() {
 		return this;
 	}
@@ -756,24 +848,33 @@ public class MyControlPanel extends JPanel implements CytoPanelComponent {
 	public Icon getIcon() {
 		return null;
 	}
+	
+
+	public void getNetworkList(CyAppAdapter adapter){
+		ArrayList<CyNetwork> netlist;
+		ArrayList<String> netNames;
+		netlist	= new ArrayList<CyNetwork>();
+		netNames = new  ArrayList<String>();
+		CyNetworkManager netmanager = adapter.getCyNetworkManager();	
+		Set<CyNetwork> setnet = netmanager.getNetworkSet();
+		//System.out.println("NETWORKS :"+setnet);
+		//creating list of networks out of the set and list of networks' names
+
+
+		for (CyNetwork net:setnet){
+			//System.out.println(net);
+			String name =net.getRow(net).get("name", String.class);
+			if (!(name.equals("null"))){
+
+				netlist.add(net);
+				//System.out.println("sel net" + name);
+				netNames.add(name);
+			}
+		}
+
+	}
 	//*****
 
 	//*****
-	public JPanel jp1=new JPanel();
-	public JPanel jp2=new JPanel();
-	public JPanel jp3=new JPanel();
-	public JPanel jp4=new JPanel();
-
-	public JPanel[] jp = new JPanel[]{jp1,jp2,jp3,jp4};
-	public JLabel jl1 = new JLabel("GO Tree Interval : ");
-	public JComboBox jcb1 = new JComboBox();
-	public JLabel jl2 = new JLabel(" ~ ");
-	public JComboBox jcb2 = new JComboBox();
-	public JLabel jl3 = new JLabel("q-value cut :");
-	public JTextArea jtf1 = new JTextArea("0.05");
-	public JLabel jl4 = new JLabel("Kappa score :");
-	public JTextArea jtf2 = new JTextArea("0.4");
-	public JButton jb1 = new JButton("Magic !!!");
-	public MathFuction mf=new MathFuction();
 
 }
