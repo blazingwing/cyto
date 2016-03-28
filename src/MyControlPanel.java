@@ -5,23 +5,41 @@ import java.awt.Color;
 import java.awt.Component;
 import java.awt.Dimension;
 import java.awt.Font;
+import java.awt.Window;
+import java.io.BufferedReader;
+import java.io.FileWriter;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.util.ArrayList;
+import java.util.Dictionary;
 import java.util.Properties;
 import java.util.Set;
+import java.util.Vector;
 
 import javax.naming.ldap.ManageReferralControl;
 import javax.swing.ActionMap;
 import javax.swing.BorderFactory;
 import javax.swing.Icon;
 import javax.swing.JButton;
+import javax.swing.JCheckBox;
+import javax.swing.JColorChooser;
 import javax.swing.JComboBox;
+import javax.swing.JComponent;
+import javax.swing.JDialog;
 import javax.swing.JPanel;
+import javax.swing.JRadioButton;
+import javax.swing.JSlider;
+import javax.swing.JTable;
 import javax.swing.JTextArea;
 import javax.swing.JTextField;
 import javax.swing.JTextPane;
+import javax.swing.JToolBar;
 import javax.swing.border.Border;
 import javax.swing.event.AncestorEvent;
 import javax.swing.event.AncestorListener;
+import javax.swing.event.ChangeEvent;
+import javax.swing.event.ChangeListener;
 
 import org.cytoscape.app.CyAppAdapter;
 import org.cytoscape.app.swing.CySwingAppAdapter;
@@ -111,6 +129,9 @@ import org.cytoscape.task.write.ExportTableTaskFactory;
 import org.cytoscape.task.write.ExportVizmapTaskFactory;
 import org.cytoscape.task.write.SaveSessionAsTaskFactory;
 import org.cytoscape.view.layout.CyLayoutAlgorithmManager;
+import org.cytoscape.work.AbstractTask;
+import org.cytoscape.work.TaskMonitor;
+import org.cytoscape.work.swing.DialogTaskManager;
 import org.cytoscape.view.model.CyNetworkView;
 import org.cytoscape.view.model.View;
 import org.cytoscape.view.presentation.RenderingEngineManager;
@@ -122,12 +143,14 @@ import org.cytoscape.view.vizmap.VisualMappingFunctionFactory;
 import org.cytoscape.view.vizmap.VisualMappingManager;
 import org.cytoscape.view.vizmap.VisualStyleFactory;
 import org.cytoscape.work.Task;
+import org.cytoscape.work.TaskFactory;
 import org.cytoscape.work.TaskIterator;
 import org.cytoscape.work.TaskManager;
 import org.cytoscape.work.undo.UndoSupport;
 import org.omg.CORBA.PUBLIC_MEMBER;
-
 import javax.swing.JLabel;
+import javax.swing.JMenu;
+import javax.swing.JMenuBar;
 import javax.swing.JOptionPane;
 
 public class MyControlPanel extends JPanel implements CytoPanelComponent {
@@ -139,15 +162,20 @@ public class MyControlPanel extends JPanel implements CytoPanelComponent {
 		
 		this.setVisible(true);
 		this.setBorder(javax.swing.BorderFactory.createTitledBorder("Basic Operations"));
-		this.setPreferredSize(new Dimension(310,500));
+		this.setPreferredSize(new Dimension(310,600));
+		
 		jp1.setBorder(javax.swing.BorderFactory.createTitledBorder("Selection Option"));
-		jp1.setPreferredSize(new Dimension(300,50));
+		jp1.setPreferredSize(new Dimension(300,305));
+		
 		jp2.setBorder(javax.swing.BorderFactory.createTitledBorder("Statistical Option"));
 		jp2.setPreferredSize(new Dimension(300,55));
+		
 		jp3.setBorder(javax.swing.BorderFactory.createTitledBorder("Grouping Option"));
-		jp3.setPreferredSize(new Dimension(300,150));
+		jp3.setPreferredSize(new Dimension(300,155));
+		
 		jp4.setBorder(javax.swing.BorderFactory.createTitledBorder("Submit"));
-		jp4.setPreferredSize(new Dimension(300,100));
+		jp4.setPreferredSize(new Dimension(300,105));
+		
 		jl1.setFont(new Font(jl1.getText(), 1, 13));
 		jp1.add(jl1);
 		jcb1.setModel(new javax.swing.DefaultComboBoxModel(new String[]{"1", "2", "3", "4", "5", "6", "7", "8", "9", "10", "11", "12", "13", "14", "15", "16", "17", "18", "19","20"}));
@@ -163,6 +191,48 @@ public class MyControlPanel extends JPanel implements CytoPanelComponent {
 		jcb2.setSelectedIndex(12);
 		jp1.add(jcb2);
 		
+		jl6.setFont(new Font(jl6.getText(), 1, 15));
+		jl6.setForeground(Color.getHSBColor((float)0.95,(float) 0.95,(float) 0.25));
+		jp1_1.add(jl6);	
+		
+		jtf4.setPreferredSize(new Dimension(100,25));;
+		jtf4.setFont(new Font(jtf4.getText(), 1, 15));
+		jp1_1.add(jtf4);
+		
+		jl7.setFont(new Font(jl6.getText(), 1, 15));
+		jl7.setForeground(Color.getHSBColor((float)0.95,(float) 0.95,(float) 0.25));
+		jp1_2.add(jl7);
+		
+		jtf5.setPreferredSize(new Dimension(100,25));;
+		jtf5.setFont(new Font(jtf5.getText(), 1, 15));
+		jp1_2.add(jtf5);	
+		
+		jp1.add(jp1_1);
+		jp1.add(jp1_2);	
+		
+		
+		
+		jr1.setSelected(true);
+		jr1.addActionListener(new java.awt.event.ActionListener(){
+			public void actionPerformed(java.awt.event.ActionEvent evt){
+				UseTaskMonitorTaskFactory useTaskMonitorTaskFactory = new UseTaskMonitorTaskFactory();
+				ChangeRadio(1);	
+				}
+			});
+		jp1.add(jr1);
+		jr2.setSelected(false);
+		jr2.addActionListener(new java.awt.event.ActionListener(){
+			public void actionPerformed(java.awt.event.ActionEvent evt){
+				UseTaskMonitorTaskFactory useTaskMonitorTaskFactory = new UseTaskMonitorTaskFactory();
+				ChangeRadio(2);	
+				}
+			});
+		jp1.add(jr2);
+		
+		jp1.add(jcc1);
+		
+		
+		
 		jl3.setFont(new Font(jl3.getText(), 1, 15));	
 		jl3.setForeground(Color.getHSBColor((float)0.95,(float) 0.95,(float) 0.25));
 		jp2.add(jl3);		
@@ -170,6 +240,8 @@ public class MyControlPanel extends JPanel implements CytoPanelComponent {
 		jtf1.setPreferredSize(new Dimension(100,25));
 		jtf1.setFont(new Font(jtf1.getText(), 1, 15));
 		jp2.add(jtf1);	
+		
+		
 		
 		jl4.setFont(new Font(jl4.getText(), 1, 15));	
 		jl4.setForeground(Color.getHSBColor((float)0.95,(float) 0.95,(float) 0.25));
@@ -179,46 +251,57 @@ public class MyControlPanel extends JPanel implements CytoPanelComponent {
 		jtf2.setFont(new Font(jtf2.getText(), 1, 15));
 		jp3_1.add(jtf2);
 		
+		js1.setMinimum(0);
+		js1.setMaximum(100);
+		js1.setValue(40);
+		js1.setPreferredSize(new Dimension(200,50));
+		js1.addChangeListener(new SliderListener());
+		jp3_11.add(js1);
+		
+		
 		jl5.setFont(new Font(jl5.getText(), 1, 15));
 		jl5.setForeground(Color.getHSBColor((float)0.95,(float) 0.95,(float) 0.25));
 		jp3_2.add(jl5);
 		
 		jtf3.setPreferredSize(new Dimension(100,25));;
 		jtf3.setFont(new Font(jtf3.getText(), 1, 15));
-		jp3_2.add(jtf3);
-		
-		jl6.setFont(new Font(jl6.getText(), 1, 15));
-		jl6.setForeground(Color.getHSBColor((float)0.95,(float) 0.95,(float) 0.25));
-		jp3_3.add(jl6);
-		
-		jtf4.setPreferredSize(new Dimension(100,25));;
-		jtf4.setFont(new Font(jtf4.getText(), 1, 15));
-		jp3_3.add(jtf4);
+		jp3_2.add(jtf3);	
 		
 		jp3.add(jp3_1);		
+		jp3.add(jp3_11);
 		jp3.add(jp3_2);
-		jp3.add(jp3_3);		
+
+		final DialogTaskManager dialogTaskManager = null;		
 		
 		jb1.addActionListener(new java.awt.event.ActionListener(){
 			public void actionPerformed(java.awt.event.ActionEvent evt){	
 
+				UseTaskMonitorTaskFactory useTaskMonitorTaskFactory = new UseTaskMonitorTaskFactory();
+				//dialogTaskManager.execute(new TaskIterator(new UseTaskMonitorTask()));
+				/*
 				TaskManager taskManager= adapter.getTaskManager();
 				CloneNetworkTaskFactory cntf = adapter.get_CloneNetworkTaskFactory();
-				TaskIterator ti = cntf.createTaskIterator(adapter.getCyApplicationManager().getCurrentNetwork());				
+				TaskIterator ti = cntf.createTaskIterator(adapter.getCyApplicationManager().getCurrentNetwork());	
 				taskManager.execute(ti);				
 				ti.append(ti);
 				taskManager.execute(ti);
+				*/
 				//getNetworkList(adapter);
 				//adapter.getCyApplicationManager().getCurrentNetworkView().updateView();
 				
-				Magic(evt,adapter);				
+				Magic(evt,adapter);		
 				}
 			});
-		jb1.setPreferredSize(new Dimension(220,25));
+		jb1.setPreferredSize(new Dimension(224,25));
 		jb2.setPreferredSize(new Dimension(130,25));
 		jb3.setPreferredSize(new Dimension(90,25));
 		jp4.add(jb1);
 		jp4.add(jb2);
+		jb3.addActionListener(new java.awt.event.ActionListener(){
+			public void actionPerformed(java.awt.event.ActionEvent evt){
+					Export();
+				}
+			});
 		jb3.addActionListener(new java.awt.event.ActionListener(){
 			public void actionPerformed(java.awt.event.ActionEvent evt){
 				Defult();
@@ -233,29 +316,50 @@ public class MyControlPanel extends JPanel implements CytoPanelComponent {
 
 		//mf.kappascore_t = Double.parseDouble(jtf2.getText());
 	}
+	
+	
+	public class SliderListener implements ChangeListener {
+	    public void stateChanged(ChangeEvent e) {
+	        JSlider source = (JSlider)e.getSource();
+	        if (!source.getValueIsAdjusting()) {
+	            int fps = (int)source.getValue();
+	            jtf2.setText(String.valueOf((double)fps/100));
+	        }    
+	    }
+	}
+	
 	public JPanel jp1=new JPanel();
 	public JPanel jp2=new JPanel();
 	public JPanel jp3=new JPanel();
 	public JPanel jp4=new JPanel();
 	public JPanel jp3_1=new JPanel();
+	public JPanel jp3_11=new JPanel();
 	public JPanel jp3_2=new JPanel();
-	public JPanel jp3_3=new JPanel();
+	public JPanel jp1_1=new JPanel();
+	public JPanel jp1_2=new JPanel();
+	public JPanel jp1_3=new JPanel();
 	
 	public JLabel jl1 = new JLabel("GO Tree Interval (Level) :");
 	public JComboBox jcb1 = new JComboBox();
 	public JLabel jl2 = new JLabel(" ~ ");
 	public JComboBox jcb2 = new JComboBox();
-	public JLabel jl3 = new JLabel("         p-value cut off:");
+	public JLabel jl3 = new JLabel("        p-value cut off :");
 	public JTextArea jtf1 = new JTextArea("0.05");
 	public JLabel jl4 = new JLabel("          Kappa score :");
 	public JTextArea jtf2 = new JTextArea("0.4");
 	public JLabel jl5 = new JLabel("   Initial group size :");
 	public JTextArea jtf3 = new JTextArea("1");
-	public JLabel jl6 = new JLabel("% for group merge :");
-	public JTextArea jtf4 = new JTextArea("1");
+	public JLabel jl6 = new JLabel("            # for genes :");
+	public JTextArea jtf4 = new JTextArea("3");
+	public JLabel jl7 = new JLabel("           % for genes :");
+	public JTextArea jtf5 = new JTextArea("4");
 	public JButton jb1 = new JButton("¡i Start ¡j");
 	public JButton jb2 = new JButton("Export file");
-	public JButton jb3 = new JButton("Defult");
+	public JButton jb3 = new JButton("Defult");	
+	public JRadioButton jr1 = new JRadioButton("Biological Process");
+	public JRadioButton jr2 = new JRadioButton("Cellular Component");
+	public JColorChooser jcc1 = new JColorChooser();
+	public JSlider js1 = new JSlider();
 	public MathFuction mf=new MathFuction();
 		
 	public void Magic(java.awt.event.ActionEvent evt,CySwingAppAdapter adapter){
@@ -298,7 +402,10 @@ public class MyControlPanel extends JPanel implements CytoPanelComponent {
 
         //-----Term-----
         FileFactory ff = new FileFactory();
-        TermList_oo=ff.ReadTermTxt("homo_term.txt");
+        if(jr1.isSelected())
+        	TermList_oo=ff.ReadTermTxt("homo_bp.txt");
+        else if(jr2.isSelected())
+        	TermList_oo=ff.ReadTermTxt("homo_cc.txt");
         CmpTermList=ff.ReadCmpTxt("homo_cmp.txt");
         CmpTermList2=ff.ReadCmpTxt("homo_cmp2.txt");
     	//double[][] Kappa=ff.ReadKappaTxt("homo_kappa.txt", TermList_o.size());   
@@ -369,14 +476,14 @@ public class MyControlPanel extends JPanel implements CytoPanelComponent {
         
         count3 = count1 + count2;
         double xa = x/count3;
-        double xb = y/count3;
+        double xb = y/count3;        
         
         for(int i=0;i<TermList_oo.size();i++){
     		int a=0;
     		for(int j=0;j<Node_name.size();j++)
         		if(TermList_oo.get(i).Node.contains(Node_name.get(j)))
         			a++;
-    		if(a>0){
+    		if(a>=Double.parseDouble(jtf4.getText()) && (100*a/count2)>=Double.parseDouble(jtf5.getText())){
     			if(mf.LevelCheck(jcb1.getSelectedIndex()+1, jcb2.getSelectedIndex()+1, TermList_oo.get(i).level_min,TermList_oo.get(i).level_max)){
     					TermList_o.add(TermList_oo.get(i));
     			}
@@ -386,6 +493,9 @@ public class MyControlPanel extends JPanel implements CytoPanelComponent {
         
 
         //-----Term FisherExcat p-value---
+        
+        for(int i=0;i<TermList_o.size();i++)
+            ref_count+=TermList_o.get(i).Node.size();
         
         for(int i=0;i<TermList_o.size();i++)
         {
@@ -412,6 +522,7 @@ public class MyControlPanel extends JPanel implements CytoPanelComponent {
         
         //**********//
         
+        ref_count = 0;
         for(int i=0;i<TermList.size();i++)
             ref_count+=TermList.get(i).Node.size();
         
@@ -441,6 +552,7 @@ public class MyControlPanel extends JPanel implements CytoPanelComponent {
         		GroupKappaTable[i][j]=k;
         	}
         }
+      //-----Term grouping Kappa connect---
         for(int i=0;i<TermList.size();i++)
         {
         	if(TermToGroupIndex[i]==-1){
@@ -463,6 +575,60 @@ public class MyControlPanel extends JPanel implements CytoPanelComponent {
         		}            		
         	} 
         }
+      //-----Term grouping merge---       
+        /*
+        for(int i=0;i<temp;i++){
+        	
+        	ArrayList<Term> group = new ArrayList<Term>();
+        	for(int j=0;j<TermList.size();j++)
+        		if(TermToGroupIndex[j]==i)
+        			group.add(TermList.get(j));
+        	
+        	if(group.size()<Double.parseDouble(jtf3.getText()))
+        		continue;   
+        	
+        	for(int j=0;j<group.size();j++){  
+        		
+            	//String group_name = mf.Min_P(group).Function;
+        		ArrayList<Term> group2 = new ArrayList<Term>();
+        		group2.add(group.get(j));
+            	
+            	Term t = new Term();
+            	t.Node.add(group.get(j).Name);
+            	
+            	Term tt = new Term();
+            	for(int k=0;k<group.get(j).Node.size();k++)
+            		tt.Node.add(group.get(j).Node.get(k));  
+            	
+        		//t.Name=group_name;
+        		
+        		for(int k=0;k<group.size();k++){
+        			
+        			if(j==k)
+        				continue;
+        			
+        			if(mf.Merge_percent(group.get(j), group.get(k))>=(Double.parseDouble(jtf4.getText())/100)){
+        				group2.add(group.get(k));
+        				t.Node.add(group.get(k).Name);
+        				for(int l=0;l<group.get(k).Node.size();l++)
+        					if(!tt.InTerm(group.get(k).Node.get(l)))
+        						tt.Node.add(group.get(k).Node.get(l));  
+        			}
+        			
+        			if(t.Node.size()<Double.parseDouble(jtf3.getText()))
+        				continue;
+        			
+        			String group_name = mf.Min_P(group2).Function;
+        			t.Function = group_name;
+        			tt.Function = group_name;
+        			
+        			GroupGeneList.add(t);
+        			GroupTermList.add(tt);
+        		}
+        	}
+        	
+        }
+        */
         int maxGroup=0;
         temp=0;
         for(int i=0;i<TermList.size();i++)
@@ -820,6 +986,8 @@ public class MyControlPanel extends JPanel implements CytoPanelComponent {
         
 
         networkView.updateView();
+        
+
 	}
 
 	public void Defult(){
@@ -828,8 +996,30 @@ public class MyControlPanel extends JPanel implements CytoPanelComponent {
 		jtf1.setText("0.05");
 		jtf2.setText("0.4");
 		jtf3.setText("1");
-		jtf4.setText("1");
+		jtf4.setText("3");
+		jtf5.setText("4");
 	}
+	
+	public void ChangeRadio(int a){
+		if(a==1)
+			jr2.setSelected(false);
+		if(a==2)
+			jr1.setSelected(false);
+	}
+	
+	public void Export(){
+
+		Vector<String> columnNames = new Vector<String>();
+		Vector<Vector<String>> data = new Vector<Vector<String>>();
+		JTable t;
+		
+		t = new JTable(data, columnNames);
+		//      t.setAutoCreateRowSorter(true);
+
+
+		
+	}
+	
 	public Component getComponent() {
 		return this;
 	}

@@ -17,7 +17,9 @@ import org.cytoscape.application.CyApplicationManager;
 import org.cytoscape.application.swing.CySwingApplication;
 import org.cytoscape.application.swing.CytoPanelComponent;
 import org.cytoscape.application.swing.CytoPanelName;
+import org.cytoscape.model.CyTableFactory;
 import org.cytoscape.task.NetworkTaskFactory;
+import org.cytoscape.task.edit.MapTableToNetworkTablesTaskFactory;
 import org.cytoscape.util.swing.internal.CyActivator;
 import org.cytoscape.view.presentation.property.values.BendFactory;
 import org.cytoscape.view.presentation.property.values.HandleFactory;
@@ -48,6 +50,7 @@ public class NetworkLayout extends AbstractCySwingApp
       	myControlPanel.setMaximumSize(new Dimension(315,500));
  		//ControlPanelAction controlPanelAction = new ControlPanelAction(cytoscapeDesktopService,myControlPanel);
  		//swingAdapter.getCySwingApplication().addAction(controlPanelAction);
+
 	}
 
 }

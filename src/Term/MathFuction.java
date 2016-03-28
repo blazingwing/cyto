@@ -4,7 +4,7 @@ import java.math.BigDecimal;
 import java.util.ArrayList;
 
 public class MathFuction {
-
+	
  public double FisherExact_getP(int a, int b, int c, int d) {
      int n = a + b + c + d;
 
@@ -14,6 +14,7 @@ public class MathFuction {
 
      return p.doubleValue();
  }
+ 
  public BigDecimal FisherExact_product(int e){
 	 BigDecimal sum=BigDecimal.valueOf(1);
 	 for(int i=1;i<=e;i++)
@@ -21,23 +22,28 @@ public class MathFuction {
 	 //System.out.println(sum);
 	 return sum;
  }
+ 
  public double FisherExact_LoggetP(int a, int b, int c, int d) {
      int n = a + b + c + d;
      
      double x = Logsum(a+b)+Logsum(c+d)+Logsum(a+c)+Logsum(b+d);
+     //double x = pv[a+b]+pv[c+d]+pv[a+c]+pv[b+d];
      //System.out.println(x);
      double y = Logsum(a)+Logsum(b)+Logsum(c)+Logsum(d)+Logsum(n);
+     //double y = pv[a]+pv[b]+pv[c]+pv[d];
      //System.out.println(y);
      double p = Math.pow(10, x-y);
      
      return p;
  }
+ 
  public double Logsum(int a){
 	 double s=Math.log10(1);
 	 for(int i=2;i<=a;i++)
 		 s+=Math.log10(i);
 	 return s;
  }
+ 
  public double Kappa_getP(ArrayList<Term> t, ArrayList<String> imp){
 	 int m=0;
 	 int s=t.size();
@@ -78,6 +84,17 @@ public class MathFuction {
 	 double k = (double)(p0-pc)/(1-pc);
 	 return k;
  }
+ 
+ public double Merge_percent(Term t1,Term t2){
+	 double p=0;
+	 int m=0;
+	 for(int i=0;i<t1.Node.size();i++)
+		 if(t2.InTerm(t1.Node.get(i)))
+			 m+=2;
+	 p=(double)m/(t1.Node.size()+t2.Node.size());
+	 return p;
+ }
+ 
  public int Array_Sum(int[] a){
 	 int s=0;
 	 for(int i=0;i<a.length;i++)
@@ -85,6 +102,7 @@ public class MathFuction {
 			 s+=a[i];
 	 return s;	
  }
+ 
  public int[] Leaf_Plus(int []a){
 	 int s=Array_Sum(a);
 	 if(s>=a.length)
@@ -97,6 +115,7 @@ public class MathFuction {
 		 }
 	 return a;
  }
+ 
  public Term Min_P(ArrayList<Term> a){
 	 Term t = new Term();
 	 if(a.size()==0)
@@ -113,6 +132,7 @@ public class MathFuction {
 	 t = a.get(index);	 
 	 return t;
  }
+ 
  public Term Min_Q(ArrayList<Term> a){
 	 Term t = new Term();
 	 if(a.size()==0)
@@ -129,6 +149,7 @@ public class MathFuction {
 	 t = a.get(index);	 
 	 return t;
  }
+ 
  public String TransCmp(ArrayList<Term> t, String key){
 	 String s=key;
  	 for(int i=0;i<t.size();i++)
@@ -139,6 +160,7 @@ public class MathFuction {
  	 }
  	 return s;
  }
+ 
  public double[] SortTable(double[] d){
 	 for(int i=0;i<d.length;i++)
      	for(int j=i+1;j<d.length;j++)
@@ -149,6 +171,7 @@ public class MathFuction {
      		} 
 	 return d;
  }
+ 
  public double FDR(double p, double[] ptable){
 	 int r=-1;
 	 for(int i=0;i<ptable.length;i++)
@@ -161,6 +184,7 @@ public class MathFuction {
 	 p=p*ptable.length/(r+1);
 	 return p;
  }
+ 
  public boolean LevelCheck(int min, int max, int k1, int k2){
 	 if(min>max){
 		 int temp=min;
