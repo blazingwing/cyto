@@ -162,56 +162,23 @@ public class MyControlPanel extends JPanel implements CytoPanelComponent {
 		
 		this.setVisible(true);
 		this.setBorder(javax.swing.BorderFactory.createTitledBorder("Basic Operations"));
-		this.setPreferredSize(new Dimension(310,600));
+		this.setPreferredSize(new Dimension(310,305));
 		
 		jp1.setBorder(javax.swing.BorderFactory.createTitledBorder("Selection Option"));
-		jp1.setPreferredSize(new Dimension(300,305));
+		jp1.setPreferredSize(new Dimension(300,205));
 		
 		jp2.setBorder(javax.swing.BorderFactory.createTitledBorder("Statistical Option"));
-		jp2.setPreferredSize(new Dimension(300,55));
+		jp2.setPreferredSize(new Dimension(300,75));
 		
 		jp3.setBorder(javax.swing.BorderFactory.createTitledBorder("Grouping Option"));
-		jp3.setPreferredSize(new Dimension(300,155));
+		jp3.setPreferredSize(new Dimension(300,225));
 		
 		jp4.setBorder(javax.swing.BorderFactory.createTitledBorder("Submit"));
 		jp4.setPreferredSize(new Dimension(300,105));
 		
-		jl1.setFont(new Font(jl1.getText(), 1, 13));
-		jp1.add(jl1);
-		jcb1.setModel(new javax.swing.DefaultComboBoxModel(new String[]{"1", "2", "3", "4", "5", "6", "7", "8", "9", "10", "11", "12", "13", "14", "15", "16", "17", "18", "19","20"}));
-		jcb1.setEnabled(true);
-		jcb1.setSelectedIndex(5);
-		jp1.add(jcb1);
+		//Selection Option
 		
-		jl2.setFont(new Font(jl2.getText(), 1, 15));
-		jp1.add(jl2);
-		
-		jcb2.setModel(new javax.swing.DefaultComboBoxModel(new String[]{"1", "2", "3", "4", "5", "6", "7", "8", "9", "10", "11", "12", "13", "14", "15", "16", "17", "18", "19","20"}));
-		jcb2.setEnabled(true);
-		jcb2.setSelectedIndex(12);
-		jp1.add(jcb2);
-		
-		jl6.setFont(new Font(jl6.getText(), 1, 15));
-		jl6.setForeground(Color.getHSBColor((float)0.95,(float) 0.95,(float) 0.25));
-		jp1_1.add(jl6);	
-		
-		jtf4.setPreferredSize(new Dimension(100,25));;
-		jtf4.setFont(new Font(jtf4.getText(), 1, 15));
-		jp1_1.add(jtf4);
-		
-		jl7.setFont(new Font(jl6.getText(), 1, 15));
-		jl7.setForeground(Color.getHSBColor((float)0.95,(float) 0.95,(float) 0.25));
-		jp1_2.add(jl7);
-		
-		jtf5.setPreferredSize(new Dimension(100,25));;
-		jtf5.setFont(new Font(jtf5.getText(), 1, 15));
-		jp1_2.add(jtf5);	
-		
-		jp1.add(jp1_1);
-		jp1.add(jp1_2);	
-		
-		
-		
+		//radio
 		jr1.setSelected(true);
 		jr1.addActionListener(new java.awt.event.ActionListener(){
 			public void actionPerformed(java.awt.event.ActionEvent evt){
@@ -229,27 +196,82 @@ public class MyControlPanel extends JPanel implements CytoPanelComponent {
 			});
 		jp1.add(jr2);
 		
-		jp1.add(jcc1);
+		//level
+		jl1_level.setFont(new Font(jl1_level.getText(), 1, 13));
+		jp1.add(jl1_level);
+		jcb1.setModel(new javax.swing.DefaultComboBoxModel(new String[]{"1", "2", "3", "4", "5", "6", "7", "8", "9", "10", "11", "12", "13", "14", "15", "16", "17", "18", "19","20"}));
+		jcb1.setEnabled(true);
+		jcb1.setSelectedIndex(5);
+		jp1.add(jcb1);
+		
+		jl1_leveldash.setFont(new Font(jl1_leveldash.getText(), 1, 15));
+		jp1.add(jl1_leveldash);
+		
+		jcb2.setModel(new javax.swing.DefaultComboBoxModel(new String[]{"1", "2", "3", "4", "5", "6", "7", "8", "9", "10", "11", "12", "13", "14", "15", "16", "17", "18", "19","20"}));
+		jcb2.setEnabled(true);
+		jcb2.setSelectedIndex(12);
+		jp1.add(jcb2);
+		
+		//#
+		jl1_hashgene.setFont(new Font(jl1_hashgene.getText(), 1, 15));
+		jl1_hashgene.setForeground(Color.getHSBColor((float)0.95,(float) 0.95,(float) 0.25));
+		jp1_1.add(jl1_hashgene);	
+		
+		jtf1_hashgene.setPreferredSize(new Dimension(100,25));;
+		jtf1_hashgene.setFont(new Font(jtf1_hashgene.getText(), 1, 15));
+		jp1_1.add(jtf1_hashgene);
+		
+		//%
+		jl1_pergene.setFont(new Font(jl1_pergene.getText(), 1, 15));
+		jl1_pergene.setForeground(Color.getHSBColor((float)0.95,(float) 0.95,(float) 0.25));
+		jp1_2.add(jl1_pergene);
+		
+		jtf1_pergene.setPreferredSize(new Dimension(100,25));;
+		jtf1_pergene.setFont(new Font(jtf1_pergene.getText(), 1, 15));
+		jp1_2.add(jtf1_pergene);	
+		
+		jp1.add(jp1_1);
+		jp1.add(jp1_2);	
+		
+		//core
+		jcheck1.setFont(new Font(jcheck1.getText(), 1, 15));
+		jcheck1.setForeground(Color.getHSBColor((float)0.95,(float) 0.95,(float) 0.25));
+		jcheck1.setSelected(true);
+		jp1_3.add(jcheck1);
+		
+		jtf1_core.setText("Core");
+		jtf1_core.setPreferredSize(new Dimension(100,25));
+		jtf1_core.setFont(new Font(jtf1_core.getText(), 1, 15));
+		jp1_3.add(jtf1_core);
+
+		jp1.add(jp1_3);
+		
+		//jp1.add(jcc1);
 		
 		
+		//p-value
+		jl2_pvalue.setFont(new Font(jl2_pvalue.getText(), 1, 15));	
+		jl2_pvalue.setForeground(Color.getHSBColor((float)0.95,(float) 0.95,(float) 0.25));
+		jp2.add(jl2_pvalue);		
 		
-		jl3.setFont(new Font(jl3.getText(), 1, 15));	
-		jl3.setForeground(Color.getHSBColor((float)0.95,(float) 0.95,(float) 0.25));
-		jp2.add(jl3);		
-		
-		jtf1.setPreferredSize(new Dimension(100,25));
-		jtf1.setFont(new Font(jtf1.getText(), 1, 15));
-		jp2.add(jtf1);	
+		jtf2_pvalue.setPreferredSize(new Dimension(100,25));
+		jtf2_pvalue.setFont(new Font(jtf2_pvalue.getText(), 1, 15));
+		jp2.add(jtf2_pvalue);	
 		
 		
+		//kappa
+		jl3_kappa.setFont(new Font(jl3_kappa.getText(), 1, 15));	
+		jl3_kappa.setForeground(Color.getHSBColor((float)0.95,(float) 0.95,(float) 0.25));
+		jp3_1.add(jl3_kappa);
 		
-		jl4.setFont(new Font(jl4.getText(), 1, 15));	
-		jl4.setForeground(Color.getHSBColor((float)0.95,(float) 0.95,(float) 0.25));
-		jp3_1.add(jl4);
+		jtf3_kappa.setPreferredSize(new Dimension(100,25));;
+		jtf3_kappa.setFont(new Font(jtf3_kappa.getText(), 1, 15));
+		jp3_1.add(jtf3_kappa);
 		
-		jtf2.setPreferredSize(new Dimension(100,25));;
-		jtf2.setFont(new Font(jtf2.getText(), 1, 15));
-		jp3_1.add(jtf2);
+		//bar
+		jl3_slider0.setFont(new Font(jl3_slider0.getText(), 1, 15));
+		jl3_slider0.setForeground(Color.getHSBColor((float)0.95,(float) 0.95,(float) 0.25));
+		jp3_11.add(jl3_slider0);
 		
 		js1.setMinimum(0);
 		js1.setMaximum(100);
@@ -258,18 +280,31 @@ public class MyControlPanel extends JPanel implements CytoPanelComponent {
 		js1.addChangeListener(new SliderListener());
 		jp3_11.add(js1);
 		
+		jl3_slider1.setFont(new Font(jl3_slider1.getText(), 1, 15));
+		jl3_slider1.setForeground(Color.getHSBColor((float)0.95,(float) 0.95,(float) 0.25));
+		jp3_11.add(jl3_slider1);
 		
-		jl5.setFont(new Font(jl5.getText(), 1, 15));
-		jl5.setForeground(Color.getHSBColor((float)0.95,(float) 0.95,(float) 0.25));
-		jp3_2.add(jl5);
+		//size
+		jl3_inigroupterm.setFont(new Font(jl3_inigroupterm.getText(), 1, 15));
+		jl3_inigroupterm.setForeground(Color.getHSBColor((float)0.95,(float) 0.95,(float) 0.25));
+		jp3_2.add(jl3_inigroupterm);
 		
-		jtf3.setPreferredSize(new Dimension(100,25));;
-		jtf3.setFont(new Font(jtf3.getText(), 1, 15));
-		jp3_2.add(jtf3);	
+		jtf3_inigroupterm.setPreferredSize(new Dimension(100,25));;
+		jtf3_inigroupterm.setFont(new Font(jtf3_inigroupterm.getText(), 1, 15));
+		jp3_2.add(jtf3_inigroupterm);	
+		
+		jl3_inigroupgene.setFont(new Font(jl3_inigroupgene.getText(), 1, 15));
+		jl3_inigroupgene.setForeground(Color.getHSBColor((float)0.95,(float) 0.95,(float) 0.25));
+		jp3_3.add(jl3_inigroupgene);
+		
+		jtf3_inigroupgene.setPreferredSize(new Dimension(100,25));;
+		jtf3_inigroupgene.setFont(new Font(jtf3_inigroupgene.getText(), 1, 15));
+		jp3_3.add(jtf3_inigroupgene);	
 		
 		jp3.add(jp3_1);		
 		jp3.add(jp3_11);
 		jp3.add(jp3_2);
+		jp3.add(jp3_3);
 
 		final DialogTaskManager dialogTaskManager = null;		
 		
@@ -297,14 +332,19 @@ public class MyControlPanel extends JPanel implements CytoPanelComponent {
 		jb3.setPreferredSize(new Dimension(90,25));
 		jp4.add(jb1);
 		jp4.add(jb2);
-		jb3.addActionListener(new java.awt.event.ActionListener(){
+		jb2.addActionListener(new java.awt.event.ActionListener(){
 			public void actionPerformed(java.awt.event.ActionEvent evt){
-					Export();
+					try {
+						Export(adapter);
+					} catch (IOException e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+					}
 				}
 			});
 		jb3.addActionListener(new java.awt.event.ActionListener(){
 			public void actionPerformed(java.awt.event.ActionEvent evt){
-				Defult();
+					Default();
 				}
 			});
 		jp4.add(jb3);
@@ -323,7 +363,7 @@ public class MyControlPanel extends JPanel implements CytoPanelComponent {
 	        JSlider source = (JSlider)e.getSource();
 	        if (!source.getValueIsAdjusting()) {
 	            int fps = (int)source.getValue();
-	            jtf2.setText(String.valueOf((double)fps/100));
+	            jtf3_kappa.setText(String.valueOf((double)fps/100));
 	        }    
 	    }
 	}
@@ -335,31 +375,48 @@ public class MyControlPanel extends JPanel implements CytoPanelComponent {
 	public JPanel jp3_1=new JPanel();
 	public JPanel jp3_11=new JPanel();
 	public JPanel jp3_2=new JPanel();
+	public JPanel jp3_3=new JPanel();
 	public JPanel jp1_1=new JPanel();
 	public JPanel jp1_2=new JPanel();
 	public JPanel jp1_3=new JPanel();
 	
-	public JLabel jl1 = new JLabel("GO Tree Interval (Level) :");
-	public JComboBox jcb1 = new JComboBox();
-	public JLabel jl2 = new JLabel(" ~ ");
-	public JComboBox jcb2 = new JComboBox();
-	public JLabel jl3 = new JLabel("        p-value cut off :");
-	public JTextArea jtf1 = new JTextArea("0.05");
-	public JLabel jl4 = new JLabel("          Kappa score :");
-	public JTextArea jtf2 = new JTextArea("0.4");
-	public JLabel jl5 = new JLabel("   Initial group size :");
-	public JTextArea jtf3 = new JTextArea("1");
-	public JLabel jl6 = new JLabel("            # for genes :");
-	public JTextArea jtf4 = new JTextArea("3");
-	public JLabel jl7 = new JLabel("           % for genes :");
-	public JTextArea jtf5 = new JTextArea("4");
-	public JButton jb1 = new JButton("¡i Start ¡j");
-	public JButton jb2 = new JButton("Export file");
-	public JButton jb3 = new JButton("Defult");	
+	//1
 	public JRadioButton jr1 = new JRadioButton("Biological Process");
 	public JRadioButton jr2 = new JRadioButton("Cellular Component");
-	public JColorChooser jcc1 = new JColorChooser();
+	public JLabel jl1_level = new JLabel("GO Tree Interval (Level) :");
+	public JComboBox jcb1 = new JComboBox();
+	public JLabel jl1_leveldash = new JLabel(" ~ ");
+	public JComboBox jcb2 = new JComboBox();
+	public JLabel jl1_hashgene = new JLabel("            # for genes :");
+	public JTextArea jtf1_hashgene = new JTextArea("3");
+	public JLabel jl1_pergene = new JLabel("           % for genes :");
+	public JTextArea jtf1_pergene = new JTextArea("4");
+	public JCheckBox jcheck1 = new JCheckBox("Auto Core");
+	public JTextArea jtf1_core = new JTextArea("Core");
+	//2
+	public JLabel jl2_pvalue = new JLabel("        p-value cut off :");
+	public JTextArea jtf2_pvalue = new JTextArea("0.05");
+	//3
+	public JLabel jl3_kappa = new JLabel("          Kappa score :");
+	public JTextArea jtf3_kappa = new JTextArea("0.4");
+	
+	public JLabel jl3_slider0 = new JLabel(" 0 ");
 	public JSlider js1 = new JSlider();
+	public JLabel jl3_slider1 = new JLabel(" 1 ");
+	
+	public JLabel jl3_inigroupterm = new JLabel("   Initial term size :");
+	public JTextArea jtf3_inigroupterm = new JTextArea("3");
+	
+	public JLabel jl3_inigroupgene = new JLabel("  Initial gene size :");
+	public JTextArea jtf3_inigroupgene = new JTextArea("1");
+
+
+	public JButton jb1 = new JButton("¡i Start ¡j");
+	public JButton jb2 = new JButton("Export file");
+	public JButton jb3 = new JButton("Default");	
+
+	public JColorChooser jcc1 = new JColorChooser();
+	
 	public MathFuction mf=new MathFuction();
 		
 	public void Magic(java.awt.event.ActionEvent evt,CySwingAppAdapter adapter){
@@ -378,6 +435,7 @@ public class MyControlPanel extends JPanel implements CytoPanelComponent {
         ArrayList<Term> GroupGeneList = new ArrayList<Term>();
         ArrayList<Term> GroupTermList = new ArrayList<Term>();
         ArrayList<Term> GGList = new ArrayList<Term>();
+        ArrayList<Term> GGList_o = new ArrayList<Term>();
         ArrayList<Double> AnnotationSite = new ArrayList<Double>();
         int NanAnnotationSite = 0;
         
@@ -483,7 +541,7 @@ public class MyControlPanel extends JPanel implements CytoPanelComponent {
     		for(int j=0;j<Node_name.size();j++)
         		if(TermList_oo.get(i).Node.contains(Node_name.get(j)))
         			a++;
-    		if(a>=Double.parseDouble(jtf4.getText()) && (100*a/count2)>=Double.parseDouble(jtf5.getText())){
+    		if(a>=Double.parseDouble(jtf1_hashgene.getText()) && (100*a/TermList_oo.get(i).Node.size())>=Double.parseDouble(jtf1_pergene.getText())){
     			if(mf.LevelCheck(jcb1.getSelectedIndex()+1, jcb2.getSelectedIndex()+1, TermList_oo.get(i).level_min,TermList_oo.get(i).level_max)){
     					TermList_o.add(TermList_oo.get(i));
     			}
@@ -516,7 +574,7 @@ public class MyControlPanel extends JPanel implements CytoPanelComponent {
         		}
         	d=ref_count-c;
         	TermList_o.get(i).pvalue=mf.FisherExact_LoggetP(a, b, c, d);
-        	if(TermList_o.get(i).pvalue <= Double.parseDouble(jtf1.getText()))
+        	if(TermList_o.get(i).pvalue <= Double.parseDouble(jtf2_pvalue.getText()))
         		TermList.add(TermList_o.get(i));
         }
         
@@ -562,7 +620,7 @@ public class MyControlPanel extends JPanel implements CytoPanelComponent {
         	int gi=TermToGroupIndex[i];
         	for(int j=i+1;j<TermList.size();j++)
         	{
-        		if(GroupKappaTable[i][j]>=Double.parseDouble(jtf2.getText())){
+        		if(GroupKappaTable[i][j]>=Double.parseDouble(jtf3_kappa.getText())){
         			if(TermToGroupIndex[j]==-1){
         				TermToGroupIndex[j]=gi;
         			}
@@ -640,7 +698,7 @@ public class MyControlPanel extends JPanel implements CytoPanelComponent {
         		if(TermToGroupIndex[j]==i)
         			group.add(TermList.get(j));
         	
-        	if(group.size()<1)
+        	if(group.size()<Double.parseDouble(jtf3_inigroupterm.getText()))
         		continue;
         	
         	String group_name = mf.Min_P(group).Function;
@@ -714,12 +772,12 @@ public class MyControlPanel extends JPanel implements CytoPanelComponent {
         	Term tempg = mf.Min_Q(g);
         	
         	int index = -1;
-        	for(int j=0;j<GGList.size();j++)
-        		if(GGList.get(j).Name.equals(tempg.Name))
+        	for(int j=0;j<GGList_o.size();j++)
+        		if(GGList_o.get(j).Name.equals(tempg.Name))
         			index = j;
         	if(index>-1)
         	{
-        		GGList.get(index).Node.add(Node_name.get(i));
+        		GGList_o.get(index).Node.add(Node_name.get(i));
         	}
         	else
         	{
@@ -727,9 +785,13 @@ public class MyControlPanel extends JPanel implements CytoPanelComponent {
         		tt.Name = tempg.Name;
         		tt.Function = tempg.Name;
         		tt.Node.add(Node_name.get(i));
-        		GGList.add(tt);
+        		GGList_o.add(tt);
         	}	
         }
+        
+        for(int i=0;i<GGList_o.size();i++)
+        	if(!(GGList_o.get(i).Node.size()<Double.parseDouble(jtf3_inigroupgene.getText())))
+        		GGList.add(GGList_o.get(i));
         
 
         //****************************
@@ -798,6 +860,8 @@ public class MyControlPanel extends JPanel implements CytoPanelComponent {
         
         
         /* Site Circle Selected */
+        
+        
         layer = (int)Math.sqrt((double)count1);
         layer /= 2;
         temp = 0;
@@ -817,8 +881,49 @@ public class MyControlPanel extends JPanel implements CytoPanelComponent {
         	nodeView.setLockedValue(BasicVisualLexicon.NODE_SIZE, 70.0);
         	temp+=1;
         }
-     
         
+        //auto-core
+        if(jcheck1.isSelected() && count1==0){
+        
+        	CyNode centroid = network.addNode();
+        	
+        	network.getRow(centroid).set(CyNetwork.NAME, jtf1_core.getText());
+
+        	networkView.updateView();        	
+
+        	nodeView = networkView.getNodeView(centroid);
+
+        	nodeView.setVisualProperty(BasicVisualLexicon.NODE_X_LOCATION, xa);
+        	nodeView.setVisualProperty(BasicVisualLexicon.NODE_Y_LOCATION, xb);        	
+        	
+        	nodeView.setLockedValue(BasicVisualLexicon.NODE_LABEL, jtf1_core.getText());
+        	
+        	nodeView.setLockedValue(BasicVisualLexicon.NODE_FILL_COLOR, Color.getHSBColor((float )0, (float) 0.4, (float) 0));
+        	nodeView.setLockedValue(BasicVisualLexicon.NODE_BORDER_PAINT, Color.getHSBColor((float )0, (float) 0.4, (float) 0));
+        	
+        	nodeView.setLockedValue(BasicVisualLexicon.NODE_SHAPE, NodeShapeVisualProperty.DIAMOND);
+        	nodeView.setLockedValue(BasicVisualLexicon.NODE_SIZE, 70.0);
+        	
+        	nodeView.setLockedValue(BasicVisualLexicon.NODE_LABEL_COLOR, Color.WHITE);
+        	nodeView.setLockedValue(BasicVisualLexicon.NODE_LABEL_FONT_SIZE, 20);
+        	nodeView.setLockedValue(BasicVisualLexicon.NODE_BORDER_WIDTH, (double)0);
+        	networkView.updateView();
+
+        	for (CyNode node : CyTableUtil.getNodesInState(network, "selected", false)){
+        		
+        		nodeView = networkView.getNodeView(node);
+        		if(nodeView.getVisualProperty(BasicVisualLexicon.NODE_LABEL).compareTo(jtf1_core.getText())==0)
+        			continue;
+
+        		network.addEdge(centroid, node, true);
+        		networkView.updateView();
+        	}
+
+        	count1++;
+        	Core_edge = (ArrayList<CyEdge>) network.getAdjacentEdgeList(centroid,CyEdge.Type.ANY);
+        	networkView.updateView();
+
+        }
         
         /* Site Circle Unselected */
         layer = (int)Math.sqrt((double)count2);
@@ -828,7 +933,10 @@ public class MyControlPanel extends JPanel implements CytoPanelComponent {
         temp = 0;
         
         for (CyNode node : CyTableUtil.getNodesInState(network, "selected", false)){
+        	
         	nodeView = networkView.getNodeView(node);
+        	if(nodeView.getVisualProperty(BasicVisualLexicon.NODE_LABEL).compareTo(jtf1_core.getText())==0)
+    			continue;
         	
         	m = (temp*360/count2)*Math.PI/180;
         	nodeView.setVisualProperty(BasicVisualLexicon.NODE_X_LOCATION, (distance+r*(count1-1)+r*(layer-(temp%layer))*layer)*Math.cos(m)+xa);
@@ -869,7 +977,7 @@ public class MyControlPanel extends JPanel implements CytoPanelComponent {
         			{
         				edgeView = networkView.getEdgeView(node_edge.get(i));
         				//edgeView.setLockedValue(BasicVisualLexicon.EDGE_STROKE_UNSELECTED_PAINT, Color.getHSBColor((float) ((float)((c/2)+(c%2==1?ClassList.size()/2:0))/ClassList.size()), c2, c3));
-        				edgeView.setLockedValue(BasicVisualLexicon.EDGE_STROKE_UNSELECTED_PAINT, Color.getHSBColor((float) ((float)c/ClassList.size()), c2, c3));
+        				edgeView.setLockedValue(BasicVisualLexicon.EDGE_STROKE_UNSELECTED_PAINT, Color.getHSBColor((float) ((float)c/((ClassList.size()==0)?1:ClassList.size())), c2, c3));
         				edgeView.setLockedValue(BasicVisualLexicon.EDGE_TRANSPARENCY,200);
         				edgeView.setLockedValue(BasicVisualLexicon.EDGE_LINE_TYPE, LineTypeVisualProperty.SOLID);
         			}
@@ -885,13 +993,17 @@ public class MyControlPanel extends JPanel implements CytoPanelComponent {
         for(int i=0;i<SiteList.size();i++){
         	AnnotationSite.add(((double)SiteList_count.get(i)/2+SiteList.get(i)));
         }
+
+        
         
         //Change Site 
         
         temp = 0;
         for (CyNode node : CyTableUtil.getNodesInState(network, "selected", false)){
-        	nodeView = networkView.getNodeView(node);
         	
+        	nodeView = networkView.getNodeView(node);
+        	if(nodeView.getVisualProperty(BasicVisualLexicon.NODE_LABEL).compareTo(jtf1_core.getText())==0)
+    			continue;
         	int c = 0;
         	String key = Node_class.get((int)temp);
         	
@@ -918,7 +1030,7 @@ public class MyControlPanel extends JPanel implements CytoPanelComponent {
         	temp += 1;        	
 
         }
-        
+
         
         /* Add Annotation */
         temp = 0;
@@ -944,10 +1056,12 @@ public class MyControlPanel extends JPanel implements CytoPanelComponent {
 
         	nodeView.setVisualProperty(BasicVisualLexicon.NODE_X_LOCATION, (dis+r*(count1-1)+r*layer*layer)*Math.cos(m)+xa);
         	nodeView.setVisualProperty(BasicVisualLexicon.NODE_Y_LOCATION, (dis+r*(count1-1)+r*layer*layer)*Math.sin(m)+xb);
+        	nodeView.setLockedValue(BasicVisualLexicon.NODE_HEIGHT, (double)30+layer*2);
+        	nodeView.setLockedValue(BasicVisualLexicon.NODE_DEPTH, (double)70+layer*2);
         	
         	nodeView.setLockedValue(BasicVisualLexicon.NODE_LABEL, GGList.get(i).Function);
         	
-        	nodeView.setLockedValue(BasicVisualLexicon.NODE_LABEL_FONT_SIZE, 24);
+        	nodeView.setLockedValue(BasicVisualLexicon.NODE_LABEL_FONT_SIZE, 24+layer);
         	nodeView.setLockedValue(BasicVisualLexicon.NODE_TRANSPARENCY, 0);
         	nodeView.setLockedValue(BasicVisualLexicon.NODE_BORDER_TRANSPARENCY, 0);
         	nodeView.setLockedValue(BasicVisualLexicon.NODE_LABEL_COLOR, Color.getHSBColor((float) ((float)c/ClassList.size()), c2, c3));
@@ -955,7 +1069,7 @@ public class MyControlPanel extends JPanel implements CytoPanelComponent {
             networkView.updateView();
         	
         }
-        for(int i=0;i<(NanSiteList_count>0?1:0);i++){
+        for(int i=0;i<(NanSiteList_count>0?(SiteList_count.size()>0)?1:0:0);i++){
         	CyNode centroid = network.addNode();
         	
         	network.getRow(centroid).set(CyNetwork.NAME, GGList.get(i).Function);
@@ -973,16 +1087,19 @@ public class MyControlPanel extends JPanel implements CytoPanelComponent {
 
         	nodeView.setVisualProperty(BasicVisualLexicon.NODE_X_LOCATION, (dis+r*(count1-1)+r*layer*layer)*Math.cos(m)+xa);
         	nodeView.setVisualProperty(BasicVisualLexicon.NODE_Y_LOCATION, (dis+r*(count1-1)+r*layer*layer)*Math.sin(m)+xb);
+        	nodeView.setLockedValue(BasicVisualLexicon.NODE_HEIGHT, (double)30+layer*2);
+        	nodeView.setLockedValue(BasicVisualLexicon.NODE_DEPTH, (double)70+layer*2);
         	
         	nodeView.setLockedValue(BasicVisualLexicon.NODE_LABEL, "other functions");
         	
-        	nodeView.setLockedValue(BasicVisualLexicon.NODE_LABEL_FONT_SIZE, 24);
+        	nodeView.setLockedValue(BasicVisualLexicon.NODE_LABEL_FONT_SIZE, 24+layer);
         	nodeView.setLockedValue(BasicVisualLexicon.NODE_TRANSPARENCY, 0);
         	nodeView.setLockedValue(BasicVisualLexicon.NODE_BORDER_TRANSPARENCY, 0);
         	nodeView.setLockedValue(BasicVisualLexicon.NODE_LABEL_COLOR, Color.getHSBColor((float) 0, c2, c3));
         	
-        	
+        	networkView.updateView();
         }
+
         
 
         networkView.updateView();
@@ -990,14 +1107,16 @@ public class MyControlPanel extends JPanel implements CytoPanelComponent {
 
 	}
 
-	public void Defult(){
+	public void Default(){
 		jcb1.setSelectedIndex(5);
 		jcb2.setSelectedIndex(12);
-		jtf1.setText("0.05");
-		jtf2.setText("0.4");
-		jtf3.setText("1");
-		jtf4.setText("3");
-		jtf5.setText("4");
+		jtf2_pvalue.setText("0.05");
+		jtf3_kappa.setText("0.4");
+		jl3_inigroupterm.setText("3");
+		jtf3_inigroupgene.setText("1");
+		jtf1_hashgene.setText("3");
+		jtf1_pergene.setText("4");
+		js1.setValue(40);
 	}
 	
 	public void ChangeRadio(int a){
@@ -1007,17 +1126,40 @@ public class MyControlPanel extends JPanel implements CytoPanelComponent {
 			jr1.setSelected(false);
 	}
 	
-	public void Export(){
+	public void Export(CySwingAppAdapter adapter) throws IOException{
+
+		FileFactory ff = new FileFactory();
 
 		Vector<String> columnNames = new Vector<String>();
 		Vector<Vector<String>> data = new Vector<Vector<String>>();
 		JTable t;
 		
-		t = new JTable(data, columnNames);
-		//      t.setAutoCreateRowSorter(true);
+        final CyApplicationManager manager = adapter.getCyApplicationManager();
+        final CyNetworkView networkView = manager.getCurrentNetworkView();
+        final CyNetwork network = manager.getCurrentNetwork();
+        View<CyNode> nodeView = null;
+        View<CyEdge> edgeView = null;
+        
+        for (CyNode node : CyTableUtil.getNodesInState(network, "selected", true)){
+        	nodeView = networkView.getNodeView(node);
+        	nodeView.setLockedValue(BasicVisualLexicon.NODE_LABEL, "RRRRRRR");
+
+        }
+        
+		//t = new JTable(data, columnNames);
+
+		ff.Output();
 
 
-		
+        for (CyNode node : CyTableUtil.getNodesInState(network, "selected", true)){
+        	nodeView = networkView.getNodeView(node);
+        	nodeView.setLockedValue(BasicVisualLexicon.NODE_LABEL, "EEEEEEE");
+
+        }
+        
+        
+		//t.setAutoCreateRowSorter(true);
+
 	}
 	
 	public Component getComponent() {

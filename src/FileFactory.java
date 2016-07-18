@@ -1,7 +1,13 @@
 import java.io.BufferedReader;
+import java.io.BufferedWriter;
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.io.OutputStream;
+import java.io.OutputStreamWriter;
 import java.util.ArrayList;
 
 import Term.Term;
@@ -164,5 +170,24 @@ public class FileFactory {
 		}		
 		
 		return k;
+	}
+	
+	public void Output() throws IOException{
+		
+		try {
+			File f=new File("C:\\exporter_test.txt");
+			f.createNewFile();
+			OutputStream os = new FileOutputStream("exporter_test.txt");
+			OutputStreamWriter osw = new OutputStreamWriter(os);
+			BufferedWriter bw = new BufferedWriter(osw);
+			
+			bw.write("12345678900000");
+			osw.close();
+			os.close();
+			
+		} catch (FileNotFoundException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 	}
 }
