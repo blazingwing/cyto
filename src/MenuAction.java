@@ -89,7 +89,7 @@ public class MenuAction extends AbstractCyAction {
     private final CyAppAdapter adapter;
 
     public MenuAction(CyAppAdapter adapter) {
-        super("々々々々々々々々々々",
+        super("HANAKO",
                 adapter.getCyApplicationManager(),
                 "network",
                 adapter.getCyNetworkViewManager());

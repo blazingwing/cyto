@@ -332,6 +332,7 @@ public class MyControlPanel extends JPanel implements CytoPanelComponent {
 		jb3.setPreferredSize(new Dimension(90,25));
 		jp4.add(jb1);
 		jp4.add(jb2);
+		/*
 		jb2.addActionListener(new java.awt.event.ActionListener(){
 			public void actionPerformed(java.awt.event.ActionEvent evt){
 					try {
@@ -342,6 +343,7 @@ public class MyControlPanel extends JPanel implements CytoPanelComponent {
 					}
 				}
 			});
+			*/
 		jb3.addActionListener(new java.awt.event.ActionListener(){
 			public void actionPerformed(java.awt.event.ActionEvent evt){
 					Default();
